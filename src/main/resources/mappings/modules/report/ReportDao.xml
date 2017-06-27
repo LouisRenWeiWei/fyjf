@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fyjf.modules.report.dao.ReportDao">
+    
+	<sql id="reportColumns">
+		a.id AS "id",
+		a.customer_id AS "customerId",
+		a.year AS "year",
+		a.report_no AS "reportNo",
+		a.report_count AS "reportCount",
+		a.examiner AS "examiner.id",
+		a.examin_time AS "examinTime",
+		a.risk_warning AS "riskWarning",
+		a.risk_warning_reason AS "riskWarningReason",
+		a.proposed_measures AS "proposedMeasures",
+		a.supervisor AS "supervisor",
+		a.business_director_advice AS "businessDirectorAdvice",
+		a.business_director AS "businessDirector",
+		a.bank_credit_report AS "bankCreditReport",
+		a.social_credit_report AS "socialCreditReport",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag",
+		u.name AS "examiner.name"
+	</sql>
+	
+	<sql id="reportJoins">
+		LEFT JOIN fyjf_t_user  u on a.examiner = u.id
+	</sql>
+    
+	<select id="get" resultType="Report">
+		SELECT 
+			<include refid="reportColumns"/>
+		FROM fyjf_t_report a
+		<include refid="reportJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="getCustomerPreReport" resultType="Report">
+		SELECT 
+			<include refid="reportColumns"/>
+		FROM fyjf_t_report a
+		<include refid="reportJoins"/>
+		WHERE a.customer_id = #{0} and date_format(a.create_date,'%Y-%m')=date_format(DATE_SUB(#{1}, INTERVAL 1 MONTH),'%Y-%m') 
+	</select>
+	
+	
+	
+	<select id="findList" resultType="Report">
+		SELECT 
+			<include refid="reportColumns"/>
+		FROM fyjf_t_report a
+		<include refid="reportJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="Report">
+		SELECT 
+			<include refid="reportColumns"/>
+		FROM fyjf_t_report a
+		<include refid="reportJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO fyjf_t_report(
+			id,
+			customer_id,
+			year,
+			report_no,
+			report_count,
+			examiner,
+			examin_time,
+			risk_warning,
+			risk_warning_reason,
+			proposed_measures,
+			supervisor,
+			business_director_advice,
+			business_director,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag,
+			bank_credit_report,
+			social_credit_report			
+		) VALUES (
+			#{id},
+			#{customerId},
+			#{year},
+			#{reportNo},
+			#{reportCount},
+			#{examiner.id},
+			#{examinTime},
+			#{riskWarning},
+			#{riskWarningReason},
+			#{proposedMeasures},
+			#{supervisor},
+			#{businessDirectorAdvice},
+			#{businessDirector},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag},
+			#{bankCreditReport},
+			#{socialCreditReport}			
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE fyjf_t_report 
+		<set>
+			<if test=" customerId!= null " >
+		        customer_id = #{customerId},
+		    </if>
+		    <if test=" year!= null " >
+		        year = #{year},
+		    </if>
+		    <if test=" reportNo!= null " >
+		        report_no = #{reportNo},
+		    </if>
+		    <if test=" reportCount!= null " >
+		        report_count = #{reportCount},
+		    </if>
+		    <if test=" examiner!= null " >
+		        examiner = #{examiner.id},
+		    </if>
+		    <if test=" examinTime!= null " >
+		        examin_time = #{examinTime},
+		    </if>
+		    <if test=" riskWarning!= null " >
+		        risk_warning = #{riskWarning},
+		    </if>
+		    <if test=" riskWarningReason!= null " >
+		        risk_warning_reason = #{riskWarningReason},
+		    </if>
+		    <if test=" proposedMeasures!= null " >
+		        proposed_measures = #{proposedMeasures},
+		    </if>
+		    <if test=" supervisor!= null " >
+		        supervisor = #{supervisor},
+		    </if>
+			<if test=" businessDirectorAdvice!= null " >
+		        business_director_advice = #{businessDirectorAdvice},
+		    </if>
+		    <if test=" businessDirector!= null " >
+		        business_director = #{businessDirector},
+		    </if>
+		    <if test=" updateBy!= null" >
+		        update_by = #{updateBy.id},
+		    </if>
+		    <if test=" updateDate!= null " >
+		        update_date = #{updateDate},
+		    </if>
+		    <if test=" remarks!= null " >
+		        remarks = #{remarks},
+		    </if>
+		     <if test=" bankCreditReport!= null " >
+		        bank_credit_report = #{bankCreditReport},
+		    </if>
+		     <if test=" socialCreditReport!= null " >
+		        social_credit_report = #{socialCreditReport}
+		    </if>
+		</set>
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE fyjf_t_report SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

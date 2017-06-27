@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fyjf.modules.customer.dao.CustomerDao">
+    
+	<sql id="customerColumns">
+		a.id AS "id",
+		a.name AS "name",
+		a.credit_code AS "creditCode",
+		a.customerState as "customerState",
+		a.area_id AS "area.id",
+		a.address AS "address",
+		a.telphone AS "telphone",
+		a.manager AS "manager",
+		a.industry_type_id AS "industryType.id",
+		a.main_business AS "mainBusiness",
+		a.manager_by_us AS "managerByUs.id",
+		a.bank_id AS "bankId",
+		a.bank_office_id AS "bankOffice.id",
+		a.bank_office_worker AS "bankOfficeWorker.id",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag",
+		office.name as "bankOffice.name",
+		a4.name AS "area.name",
+		it.name as "industryType.name",
+		u.name as "managerByUs.name",
+		u2.name as "bankOfficeWorker.name",
+		r.id as "report.id",
+		r.examin_time as "report.examinTime",
+		ovr.id as "overdueReport.id"
+	</sql>
+	
+	<sql id="customerJoins">
+		LEFT JOIN fyjf_t_office office on a.bank_office_id = office.id
+		LEFT JOIN fyjf_t_area a4 ON a4.id = a.area_id
+		LEFT JOIN fyjf_t_industry_type it ON it.id = a.industry_type_id
+		LEFT JOIN fyjf_t_user u ON  u.id = a.manager_by_us
+		LEFT JOIN fyjf_t_user u2 ON  u2.id = a.bank_office_worker
+		LEFT JOIN fyjf_t_report r on r.customer_id = a.id  and  date_format(r.create_date,'%Y-%m')=date_format(now(),'%Y-%m')
+		LEFT JOIN fyjf_t_overdue_report  ovr on ovr.customer_id = a.id and ovr.create_date > a.update_date
+	</sql>
+    
+	<select id="get" resultType="Customer">
+		SELECT 
+			<include refid="customerColumns"/>
+		FROM fyjf_t_customer a
+		<include refid="customerJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Customer">
+		SELECT 
+			<include refid="customerColumns"/>
+		FROM fyjf_t_customer a
+		<include refid="customerJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL} 
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="managerByUs != null">
+				AND a.manager_by_us = #{managerByUs.id}
+			</if>
+			<if test="bankOfficeWorker != null">
+				AND a.bank_office_worker = #{bankOfficeWorker.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="Customer">
+		SELECT 
+			<include refid="customerColumns"/>
+		FROM fyjf_t_customer a
+		<include refid="customerJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}  
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO fyjf_t_customer(
+			id,
+			name,
+			credit_code,
+			customerState,
+			area_id,
+			address,
+			telphone,
+			manager,
+			industry_type_id,
+			main_business,
+			manager_by_us,
+			bank_id,
+			bank_office_id,
+			bank_office_worker,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{name},
+			#{creditCode},
+			#{customerState},
+			#{area.id},
+			#{address},
+			#{telphone},
+			#{manager},
+			#{industryType.id},
+			#{mainBusiness},
+			#{managerByUs.id},
+			#{bankId},
+			#{bankOffice.id},
+			#{bankOfficeWorker.id},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE fyjf_t_customer		
+		<set>
+			<if test=" name!= null " >
+				name = #{name},
+			</if>
+			<if test=" creditCode!= null " >
+				credit_code = #{creditCode},
+			</if>
+			<if test=" customerState!= null " >
+				customerState = #{customerState},
+			</if>
+			<if test=" area!= null " >
+				area_id = #{area.id},
+			</if>
+			<if test=" address!= null " >
+				address = #{address},
+			</if>
+			<if test=" telphone!= null " >
+				telphone = #{telphone},
+			</if>
+			<if test=" manager!= null " >
+				manager = #{manager},
+			</if>
+			<if test=" industryType!= null " >
+				industry_type_id = #{industryType.id},
+			</if>
+			<if test=" mainBusiness!= null " >
+				main_business = #{mainBusiness},
+			</if>
+			<if test=" managerByUs!= null " >
+				manager_by_us = #{managerByUs.id},
+			</if>
+			<if test=" bankId!= null " >
+				bank_id = #{bankId},
+			</if>
+			<if test=" bankOffice!= null " >
+				bank_office_id = #{bankOffice.id},
+			</if>
+			<if test=" bankOfficeWorker!= null " >
+				bank_office_worker = #{bankOfficeWorker.id},
+			</if>
+			<if test=" updateBy!= null" >
+				update_by = #{updateBy.id},
+			</if>
+			<if test=" updateDate!= null" >
+				update_date = #{updateDate},
+			</if>
+			<if test=" remarks!= null" >
+				remarks = #{remarks}
+			</if>
+		</set>
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE fyjf_t_customer SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

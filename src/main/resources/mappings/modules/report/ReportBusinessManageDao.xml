@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fyjf.modules.report.dao.ReportBusinessManageDao">
+    
+	<sql id="reportBusinessManageColumns">
+		a.id AS "id",
+		a.loan_report_id AS "loanReportId",
+		a.main_business_change AS "mainBusinessChange",
+		a.business_state AS "businessState",
+		a.enterprise_trend AS "enterpriseTrend",
+		a.main_business_remark AS "mainBusinessRemark",
+		a.orginaltion_change AS "orginaltionChange",
+		a.org_change_effect AS "orgChangeEffect",
+		a.org_change_remark AS "orgChangeRemark",
+		a.shareholders_change AS "shareholdersChange",
+		a.shareholders_change_effect AS "shareholdersChangeEffect",
+		a.shareholders_change_remark AS "shareholdersChangeRemark",
+		a.customer_manage AS "customerManage",
+		a.customer_manage_remark AS "customerManageRemark",
+		a.arbitration_state AS "arbitrationState",
+		a.arbitration_state_effect AS "arbitrationStateEffect",
+		a.arbitration_state_remark AS "arbitrationStateRemark",
+		a.outer_manage AS "outerManage",
+		a.outer_manage_measures AS "outerManageMeasures",
+		a.outer_manage_remark AS "outerManageRemark",
+		a.partner_state AS "partnerState",
+		a.partner_obtain_goal AS "partnerObtainGoal",
+		a.partner_state_remark AS "partnerStateRemark",
+		a.bad_effect_state AS "badEffectState",
+		a.bad_effect_remark AS "badEffectRemark",
+		a.business_manage_imgs AS "businessManageImgs",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag",
+		a.business_manage_other as "reportBusinessManageOther"
+	</sql>
+	
+	<sql id="reportBusinessManageJoins">
+	</sql>
+    
+	<select id="get" resultType="ReportBusinessManage">
+		SELECT 
+			<include refid="reportBusinessManageColumns"/>
+		FROM fyjf_t_report_business_manage a
+		<include refid="reportBusinessManageJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="getByReportId" resultType="ReportBusinessManage">
+		SELECT 
+			<include refid="reportBusinessManageColumns"/>
+		FROM fyjf_t_report_business_manage a
+		<include refid="reportBusinessManageJoins"/>
+		WHERE a.loan_report_id = #{reportId}
+	</select>
+	
+	<select id="findList" resultType="ReportBusinessManage">
+		SELECT 
+			<include refid="reportBusinessManageColumns"/>
+		FROM fyjf_t_report_business_manage a
+		<include refid="reportBusinessManageJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="ReportBusinessManage">
+		SELECT 
+			<include refid="reportBusinessManageColumns"/>
+		FROM fyjf_t_report_business_manage a
+		<include refid="reportBusinessManageJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO fyjf_t_report_business_manage(
+			id,
+			loan_report_id,
+			main_business_change,
+			business_state,
+			enterprise_trend,
+			main_business_remark,
+			orginaltion_change,
+			org_change_effect,
+			org_change_remark,
+			shareholders_change,
+			shareholders_change_effect,
+			shareholders_change_remark,
+			customer_manage,
+			customer_manage_remark,
+			arbitration_state,
+			arbitration_state_effect,
+			arbitration_state_remark,
+			outer_manage,
+			outer_manage_measures,
+			outer_manage_remark,
+			partner_state,
+			partner_obtain_goal,
+			partner_state_remark,
+			bad_effect_state,
+			bad_effect_remark,
+			business_manage_imgs,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag,
+			business_manage_other
+		) VALUES (
+			#{id},
+			#{loanReportId},
+			#{mainBusinessChange},
+			#{businessState},
+			#{enterpriseTrend},
+			#{mainBusinessRemark},
+			#{orginaltionChange},
+			#{orgChangeEffect},
+			#{orgChangeRemark},
+			#{shareholdersChange},
+			#{shareholdersChangeEffect},
+			#{shareholdersChangeRemark},
+			#{customerManage},
+			#{customerManageRemark},
+			#{arbitrationState},
+			#{arbitrationStateEffect},
+			#{arbitrationStateRemark},
+			#{outerManage},
+			#{outerManageMeasures},
+			#{outerManageRemark},
+			#{partnerState},
+			#{partnerObtainGoal},
+			#{partnerStateRemark},
+			#{badEffectState},
+			#{badEffectRemark},
+			#{businessManageImgs},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag},
+			#{reportBusinessManageOther}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE fyjf_t_report_business_manage 
+		<set>
+			<if test=" loanReportId!= null " >
+				loan_report_id = #{loanReportId},
+			</if>
+			<if test=" mainBusinessChange!= null " >
+				main_business_change = #{mainBusinessChange},
+			</if>
+			<if test=" businessState!= null " >
+				business_state = #{businessState},
+			</if>
+			
+			<if test=" enterpriseTrend!= null " >
+				enterprise_trend = #{enterpriseTrend},
+			</if>
+			<if test=" mainBusinessRemark!= null " >
+				main_business_remark = #{mainBusinessRemark},
+			</if>
+			<if test=" orginaltionChange!= null " >
+				orginaltion_change = #{orginaltionChange},
+			</if>
+			<if test=" orgChangeEffect!= null " >
+				org_change_effect = #{orgChangeEffect},
+			</if>
+			<if test=" orgChangeRemark!= null " >
+				org_change_remark = #{orgChangeRemark},
+			</if>
+			
+			
+			<if test=" shareholdersChange!= null " >
+				shareholders_change = #{shareholdersChange},
+			</if>
+			<if test=" shareholdersChangeEffect!= null " >
+				shareholders_change_effect = #{shareholdersChangeEffect},
+			</if>
+			<if test=" shareholdersChangeRemark!= null " >
+				shareholders_change_remark = #{shareholdersChangeRemark},
+			</if>
+			<if test=" customerManage!= null " >
+				customer_manage = #{customerManage},
+			</if>
+			<if test=" customerManageRemark!= null " >
+				customer_manage_remark = #{customerManageRemark},
+			</if>
+			
+			<if test=" arbitrationState!= null " >
+				arbitration_state = #{arbitrationState},
+			</if>
+			<if test=" arbitrationStateEffect!= null " >
+				arbitration_state_effect = #{arbitrationStateEffect},
+			</if>
+			<if test=" arbitrationStateRemark!= null " >
+				arbitration_state_remark = #{arbitrationStateRemark},
+			</if>
+			<if test=" outerManage!= null " >
+				outer_manage = #{outerManage},
+			</if>
+			<if test=" outerManageMeasures!= null " >
+				outer_manage_measures = #{outerManageMeasures},
+			</if>
+			<if test=" outerManageRemark!= null " >
+				outer_manage_remark = #{outerManageRemark},
+			</if>
+			
+			<if test=" partnerState!= null " >
+				partner_state = #{partnerState},
+			</if>
+			<if test=" partnerObtainGoal!= null " >
+				partner_obtain_goal = #{partnerObtainGoal},
+			</if>
+			<if test=" partnerStateRemark!= null " >
+				partner_state_remark = #{partnerStateRemark},
+			</if>
+			<if test=" badEffectState!= null " >
+				bad_effect_state = #{badEffectState},
+			</if>
+			<if test=" badEffectRemark!= null " >
+				bad_effect_remark = #{badEffectRemark},
+			</if>
+			<if test=" businessManageImgs!= null " >
+				business_manage_imgs = #{businessManageImgs},
+			</if>
+			
+			
+			<if test=" updateBy!= null" >
+				update_by = #{updateBy.id},
+			</if>
+			<if test=" updateDate!= null" >
+				update_date = #{updateDate},
+			</if>
+			<if test=" remarks!= null" >
+				remarks = #{remarks}
+			</if>
+			
+			<if test=" reportBusinessManageOther!= null" >
+				business_manage_other = #{reportBusinessManageOther}
+			</if>
+		</set>			
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE fyjf_t_report_business_manage SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

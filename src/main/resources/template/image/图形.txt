@@ -1,0 +1,143 @@
+
+选择
+<w:r w:rsidRPr="00873BA3">
+  <w:rPr>
+	<w:rFonts w:asciiTheme="minorEastAsia" w:hAnsiTheme="minorEastAsia"/>
+	<w:color w:val="00B050"/>
+	<w:sz w:val="28"/>
+	<w:szCs w:val="28"/>
+  </w:rPr>
+  <w:sym w:font="Wingdings 2" w:char="F052"/>
+</w:r>
+
+
+selected_good
+
+<w:r w:rsidRPr="00873BA3">
+  <w:rPr>
+	<w:rFonts w:asciiTheme="minorEastAsia" w:hAnsiTheme="minorEastAsia"/>
+	<w:color w:val="00B0F0"/>
+	<w:sz w:val="28"/>
+	<w:szCs w:val="28"/>
+  </w:rPr>
+  <w:sym w:font="Wingdings 2" w:char="F052"/>
+</w:r>
+
+selected_info
+
+<w:r w:rsidRPr="00873BA3">
+  <w:rPr>
+	<w:rFonts w:asciiTheme="minorEastAsia" w:hAnsiTheme="minorEastAsia"/>
+	<w:color w:val="00FF00"/>
+	<w:sz w:val="28"/>
+	<w:szCs w:val="28"/>
+  </w:rPr>
+  <w:sym w:font="Wingdings 2" w:char="F052"/>
+</w:r>
+			
+selected_wanring
+<w:r w:rsidRPr="00873BA3">
+  <w:rPr>
+	<w:rFonts w:asciiTheme="minorEastAsia" w:hAnsiTheme="minorEastAsia"/>
+	<w:color w:val="7030A0"/>
+	<w:sz w:val="28"/>
+	<w:szCs w:val="28"/>
+  </w:rPr>
+  <w:sym w:font="Wingdings 2" w:char="F052"/>
+</w:r>
+
+
+selected_error
+<w:r w:rsidRPr="00FD71F3">
+  <w:rPr>
+	<w:rFonts w:asciiTheme="minorEastAsia" w:hAnsiTheme="minorEastAsia"/>
+	<w:color w:val="FF0000"/>
+	<w:sz w:val="28"/>
+	<w:szCs w:val="28"/>
+  </w:rPr>
+  <w:sym w:font="Wingdings 2" w:char="F052"/>
+</w:r>
+			
+unselected
+			
+
+
+
+<#if reportFinance.usedByAllowed=="1" >
+	<w:r w:rsidRPr="00873BA3">
+	  <w:rPr>
+		<w:rFonts w:asciiTheme="minorEastAsia" w:hAnsiTheme="minorEastAsia"/>
+		<w:color w:val="00B050"/>
+		<w:sz w:val="28"/>
+		<w:szCs w:val="28"/>
+	  </w:rPr>
+	  <w:sym w:font="Wingdings 2" w:char="F052"/>
+	</w:r>
+<#else>
+	<w:r>
+	  <w:rPr>
+		<w:rFonts w:ascii="宋体" w:hAnsi="宋体" w:hint="eastAsia"/>
+		<w:sz w:val="24"/>
+	  </w:rPr>
+	  <w:t>□</w:t>
+	</w:r>
+</#if>
+
+
+是否
+<#if =="1" >
+	<w:r w:rsidRPr="00873BA3">
+	  <w:rPr>
+		<w:rFonts w:asciiTheme="minorEastAsia" w:hAnsiTheme="minorEastAsia"/>
+		<w:color w:val="00B050"/>
+		<w:sz w:val="28"/>
+		<w:szCs w:val="28"/>
+	  </w:rPr>
+	  <w:sym w:font="Wingdings 2" w:char="F052"/>
+	</w:r>
+<#else>
+	<w:r>
+	  <w:rPr>
+		<w:rFonts w:ascii="宋体" w:hAnsi="宋体" w:hint="eastAsia"/>
+		<w:sz w:val="24"/>
+	  </w:rPr>
+	  <w:t>□</w:t>
+	</w:r>
+</#if>
+
+	<w:r>
+	  <w:rPr>
+		<w:rFonts w:ascii="宋体" w:hAnsi="宋体" w:hint="eastAsia"/>
+		<w:sz w:val="24"/>
+	  </w:rPr>
+	  <w:t>是，</w:t>
+	</w:r>
+<#if =="0" >
+	<w:r w:rsidRPr="00FD71F3">
+	  <w:rPr>
+		<w:rFonts w:asciiTheme="minorEastAsia" w:hAnsiTheme="minorEastAsia"/>
+		<w:color w:val="FF0000"/>
+		<w:sz w:val="28"/>
+		<w:szCs w:val="28"/>
+	  </w:rPr>
+	  <w:sym w:font="Wingdings 2" w:char="F052"/>
+	</w:r>
+<#else>
+	<w:r>
+	  <w:rPr>
+		<w:rFonts w:ascii="宋体" w:hAnsi="宋体" w:hint="eastAsia"/>
+		<w:sz w:val="24"/>
+	  </w:rPr>
+	  <w:t>□</w:t>
+	</w:r>
+</#if>
+	<w:r>
+	  <w:rPr>
+		<w:rFonts w:ascii="宋体" w:hAnsi="宋体" w:hint="eastAsia"/>
+		<w:sz w:val="24"/>
+	  </w:rPr>
+	  <w:t>否</w:t>
+	</w:r>
+	
+	
+	

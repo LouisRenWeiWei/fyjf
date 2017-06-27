@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fyjf.modules.report.dao.ReportGuaranteeDao">
+    
+	<sql id="reportGuaranteeColumns">
+		a.id AS "id",
+		a.loan_report_id AS "loanReportId",
+		a.guarantee_type AS "guaranteeType",
+		a.guarantee_other AS "guaranteeOther",
+		a.collateral_type AS "collateralType",
+		a.collateral_person AS "collateralPerson",
+		a.guarantee_state AS "guaranteeState",
+		a.collateral_value AS "collateralValue",
+		a.collateral_rate AS "collateralRate",
+		a.collateral_current_value AS "collateralCurrentValue",
+		a.guarantee_remark AS "guaranteeRemark",
+		a.guarantee_imgs AS "guaranteeImgs",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag",
+		a.report_guarantee_other as "reportGuaranteeOther"
+	</sql>
+	
+	<sql id="reportGuaranteeJoins">
+	</sql>
+    
+	<select id="get" resultType="ReportGuarantee">
+		SELECT 
+			<include refid="reportGuaranteeColumns"/>
+		FROM fyjf_t_report_guarantee a
+		<include refid="reportGuaranteeJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="getByReportId" resultType="ReportGuarantee">
+		SELECT 
+			<include refid="reportGuaranteeColumns"/>
+		FROM fyjf_t_report_guarantee a
+		<include refid="reportGuaranteeJoins"/>
+		WHERE a.loan_report_id = #{reportId}
+	</select>
+	
+	<select id="findList" resultType="ReportGuarantee">
+		SELECT 
+			<include refid="reportGuaranteeColumns"/>
+		FROM fyjf_t_report_guarantee a
+		<include refid="reportGuaranteeJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="ReportGuarantee">
+		SELECT 
+			<include refid="reportGuaranteeColumns"/>
+		FROM fyjf_t_report_guarantee a
+		<include refid="reportGuaranteeJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO fyjf_t_report_guarantee(
+			id,
+			loan_report_id,
+			guarantee_type,
+			guarantee_other,
+			collateral_type,
+			collateral_person,
+			guarantee_state,
+			collateral_value,
+			collateral_rate,
+			collateral_current_value,
+			guarantee_remark,
+			guarantee_imgs,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag,
+			report_guarantee_other
+		) VALUES (
+			#{id},
+			#{loanReportId},
+			#{guaranteeType},
+			#{guaranteeOther},
+			#{collateralType},
+			#{collateralPerson},
+			#{guaranteeState},
+			#{collateralValue},
+			#{collateralRate},
+			#{collateralCurrentValue},
+			#{guaranteeRemark},
+			#{guaranteeImgs},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag},
+			#{reportGuaranteeOther}			
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE fyjf_t_report_guarantee 
+		<set>
+			<if test=" loanReportId!= null " >
+				loan_report_id = #{loanReportId},
+			</if>
+			<if test=" guaranteeType!= null " >
+				guarantee_type = #{guaranteeType},
+			</if>
+			<if test=" guaranteeOther!= null " >
+				guarantee_other = #{guaranteeOther},
+			</if>
+			<if test=" collateralType!= null " >
+				collateral_type = #{collateralType},
+			</if>
+			<if test=" collateralPerson!= null " >
+				collateral_person = #{collateralPerson},
+			</if>
+			<if test=" guaranteeState!= null " >
+				guarantee_state = #{guaranteeState},
+			</if>
+			<if test=" collateralValue!= null " >
+				collateral_value = #{collateralValue},
+			</if>
+			<if test=" collateralRate!= null " >
+				collateral_rate = #{collateralRate},
+			</if>
+			<if test=" collateralCurrentValue!= null " >
+				collateral_current_value = #{collateralCurrentValue},
+			</if>
+			<if test=" guaranteeRemark!= null " >
+				guarantee_remark = #{guaranteeRemark},
+			</if>
+			<if test=" guaranteeImgs!= null " >
+				guarantee_imgs = #{guaranteeImgs},
+			</if>
+			
+			<if test=" updateBy!= null" >
+				update_by = #{updateBy.id},
+			</if>
+			<if test=" updateDate!= null" >
+				update_date = #{updateDate},
+			</if>
+			<if test=" remarks!= null" >
+				remarks = #{remarks}
+			</if>
+			<if test=" reportGuaranteeOther!= null" >
+				report_guarantee_other = #{reportGuaranteeOther}
+			</if>
+		</set>
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE fyjf_t_report_guarantee SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

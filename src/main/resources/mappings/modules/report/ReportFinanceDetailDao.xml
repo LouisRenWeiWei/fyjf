@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fyjf.modules.report.dao.ReportFinanceDetailDao">
+    
+	<sql id="reportFinanceDetailColumns">
+		a.id AS "id",
+		a.loan_report_id AS "loanReportId",
+		a.credit_type AS "creditType.id",
+		a.contract_amount AS "contractAmount",
+		a.current_balance AS "currentBalance",
+		a.refund_start_time AS "refundStartTime",
+		a.refund_end_time AS "refundEndTime",
+		a.guarantee_measures AS "guaranteeMeasures",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag",
+		l.name as "creditType.name"
+	</sql>
+	
+	<sql id="reportFinanceDetailJoins">
+		left join fyjf_t_loan_type l on a.credit_type = l.id
+	</sql>
+    
+	<select id="get" resultType="ReportFinanceDetail">
+		SELECT 
+			<include refid="reportFinanceDetailColumns"/>
+		FROM fyjf_t_report_finance_detail a
+		<include refid="reportFinanceDetailJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findListByReportId" resultType="ReportFinanceDetail">
+		SELECT 
+			<include refid="reportFinanceDetailColumns"/>
+		FROM fyjf_t_report_finance_detail a
+		<include refid="reportFinanceDetailJoins"/>
+		<where>
+			a.loan_report_id = #{reportId}
+		</where>
+	</select>
+	
+	
+	
+	<select id="findList" resultType="ReportFinanceDetail">
+		SELECT 
+			<include refid="reportFinanceDetailColumns"/>
+		FROM fyjf_t_report_finance_detail a
+		<include refid="reportFinanceDetailJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="ReportFinanceDetail">
+		SELECT 
+			<include refid="reportFinanceDetailColumns"/>
+		FROM fyjf_t_report_finance_detail a
+		<include refid="reportFinanceDetailJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO fyjf_t_report_finance_detail(
+			id,
+			loan_report_id,
+			credit_type,
+			contract_amount,
+			current_balance,
+			refund_start_time,
+			refund_end_time,
+			guarantee_measures,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{loanReportId},
+			#{creditType.id},
+			#{contractAmount},
+			#{currentBalance},
+			#{refundStartTime},
+			#{refundEndTime},
+			#{guaranteeMeasures},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE fyjf_t_report_finance_detail 
+		<set>
+			<if test=" loanReportId!= null " >
+				loan_report_id = #{loanReportId},
+			</if>
+			<if test=" creditType!= null " >
+				credit_type = #{creditType.id},
+			</if>
+			<if test=" contractAmount!= null " >
+				contract_amount = #{contractAmount},
+			</if>
+			<if test=" currentBalance!= null " >
+				current_balance = #{currentBalance},
+			</if>
+			<if test=" refundStartTime!= null " >
+				refund_start_time = #{refundStartTime},
+			</if>
+			<if test=" refundEndTime!= null " >
+				refund_end_time = #{refundEndTime},
+			</if>
+			<if test=" guaranteeMeasures!= null " >
+				guarantee_measures = #{guaranteeMeasures},
+			</if>
+			<if test=" updateBy!= null" >
+				update_by = #{updateBy.id},
+			</if>
+			<if test=" updateDate!= null" >
+				update_date = #{updateDate},
+			</if>
+			<if test=" remarks!= null" >
+				remarks = #{remarks}
+			</if>
+		</set>
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE fyjf_t_report_finance_detail SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

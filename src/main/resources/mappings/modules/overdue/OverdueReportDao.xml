@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fyjf.modules.overdue.dao.OverdueReportDao">
+
+	<resultMap type="OverdueReport" id="overdueReport">
+		<id property="id" column="id"/>
+		<id property="overduePdf" column="overduePdf"/>
+		<id property="createDate" column="createDate"/>
+		<id property="overdueDays" column="overdueDays"/>
+		<association property="customer" javaType="Customer">
+			<id property="id" column="customerId"/>
+			<id property="name" column="customerName"/>
+		</association>
+		<collection property="overdueProgress" ofType="OverdueProgress">
+			<id property="id" column="opId"/>
+			<id property="title" column="opTitle"/>
+			<id property="description" column="opDescription"/>
+			<id property="overdueImgs" column="opOverdueImgs"/>
+		</collection>
+	</resultMap>
+    
+	<sql id="overdueReportColumns">
+		a.id AS "id",
+		a.customer_id AS "customer.id",
+		a.overdue_pdf AS "overduePdf",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag",
+		a.overdue_days as "overdueDays"
+	</sql>
+	
+	<sql id="overdueReportJoins">
+		LEFT OUTER JOIN fyjf_t_overdue_progress op on a.id = op.overdue_id 
+	</sql>
+    
+	<select id="get" resultType="OverdueReport">
+		SELECT 
+			<include refid="overdueReportColumns"/>
+		FROM fyjf_t_overdue_report a
+		<include refid="overdueReportJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="OverdueReport">
+		SELECT 
+			<include refid="overdueReportColumns"/>
+		FROM fyjf_t_overdue_report a
+		<include refid="overdueReportJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findListByBankWorker" resultMap="overdueReport">
+		SELECT 
+		a.id AS "id",
+		a.customer_id AS "customerId",
+		a.overdue_pdf AS "overduePdf",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag",
+		a.overdue_days as "overdueDays",
+		op.id as "opId",
+		op.title as "opTitle",
+		op.description as "opDescription",
+		op.overdue_imgs as "opOverdueImgs",
+		c.name as "customerName"
+		FROM fyjf_t_overdue_report a
+		LEFT OUTER JOIN fyjf_t_overdue_progress op on a.id = op.overdue_id
+		LEFT JOIN fyjf_t_customer c on a.customer_id = c.id 
+		LEFT JOIN fyjf_t_user u on u.id = c.bank_office_worker
+		where u.account =  #{account}
+	</select>
+	
+	
+	
+	<select id="findAllList" resultType="OverdueReport">
+		SELECT 
+			<include refid="overdueReportColumns"/>
+		FROM fyjf_t_overdue_report a
+		<include refid="overdueReportJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO fyjf_t_overdue_report(
+			id,
+			customer_id,
+			overdue_pdf,
+			overdue_days,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{customer.id},
+			#{overduePdf},
+			#{overdueDays},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE fyjf_t_overdue_report
+		<set>
+			<if test=" customer!= null " >
+				customer_id = #{customer.id},
+			</if>
+			<if test=" overduePdf!= null " >
+				overdue_pdf = #{overduePdf},
+			</if>
+			<if test=" overdueDays!= null " >
+				overdue_days = #{overdueDays},
+			</if>			
+			<if test=" updateBy!= null" >
+				update_by = #{updateBy.id},
+			</if>
+			<if test=" updateDate!= null" >
+				update_date = #{updateDate},
+			</if>
+			<if test=" remarks!= null" >
+				remarks = #{remarks}
+			</if>
+		</set>			
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE fyjf_t_overdue_report SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fyjf.modules.company.dao.CompanyDao">
+    
+	<sql id="companyColumns">
+		a.id AS "id",
+		a.name AS "name",
+		a.corpid AS "corpid",
+		a.corpsecrect AS "corpsecrect",
+		a.socialCredit AS "socialCredit",
+		a.area_id AS "areaId",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="companyJoins">
+	</sql>
+    
+	<select id="get" resultType="Company">
+		SELECT 
+			<include refid="companyColumns"/>
+		FROM fyjf_t_company a
+		<include refid="companyJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Company">
+		SELECT 
+			<include refid="companyColumns"/>
+		FROM fyjf_t_company a
+		<include refid="companyJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="Company">
+		SELECT 
+			<include refid="companyColumns"/>
+		FROM fyjf_t_company a
+		<include refid="companyJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findBankList" resultType="Map">
+		SELECT c.id,c.`name`,c.corpId,c.corpSecrect,c.socialCredit,a.`name` as areaName from fyjf_t_company c
+		LEFT JOIN fyjf_t_area a on c.area_id = a.id
+		where c.id!='0'
+	</select>
+	
+	
+	
+	
+	<select id="findUserCompanyByUserOfficeId" resultType="Company">
+		SELECT 
+			<include refid="companyColumns"/>
+		from fyjf_t_office of
+		LEFT JOIN fyjf_t_company a on of.company_id = a.id
+		<include refid="companyJoins"/>
+		<where>
+			a.del_flag = '0' and of.id= #{officeId}
+		</where>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO fyjf_t_company(
+			id,
+			name,
+			corpid,
+			corpsecrect,
+			socialCredit,
+			area_id,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{name},
+			#{corpid},
+			#{corpsecrect},
+			#{socialCredit},
+			#{areaId},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE fyjf_t_company SET 	
+			name = #{name},
+			corpid = #{corpid},
+			corpsecrect = #{corpsecrect},
+			socialCredit = #{socialCredit},
+			area_id = #{areaId},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE fyjf_t_company SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

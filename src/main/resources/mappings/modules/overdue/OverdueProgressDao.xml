@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fyjf.modules.overdue.dao.OverdueProgressDao">
+    
+	<sql id="overdueProgressColumns">
+		a.id AS "id",
+		a.overdue_id AS "overdueId",
+		a.title AS "title",
+		a.description AS "description",
+		a.overdue_imgs AS "overdueImgs",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="overdueProgressJoins">
+	</sql>
+    
+	<select id="get" resultType="OverdueProgress">
+		SELECT 
+			<include refid="overdueProgressColumns"/>
+		FROM fyjf_t_overdue_progress a
+		<include refid="overdueProgressJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="OverdueProgress">
+		SELECT 
+			<include refid="overdueProgressColumns"/>
+		FROM fyjf_t_overdue_progress a
+		where a.overdue_id = #{overdueId}
+		order by a.create_date desc
+	</select>
+	
+	<select id="findAllList" resultType="OverdueProgress">
+		SELECT 
+			<include refid="overdueProgressColumns"/>
+		FROM fyjf_t_overdue_progress a
+		<include refid="overdueProgressJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO fyjf_t_overdue_progress(
+			id,
+			overdue_id,
+			title,
+			description,
+			overdue_imgs,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{overdueId},
+			#{title},
+			#{description},
+			#{overdueImgs},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE fyjf_t_overdue_progress SET 	
+			overdue_id = #{overdueId},
+			title = #{title},
+			description = #{description},
+			overdue_imgs = #{overdueImgs},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE fyjf_t_overdue_progress SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

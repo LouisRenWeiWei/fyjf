@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fyjf.modules.report.dao.ReportCumtomerQualityDao">
+    
+	<sql id="reportCumtomerQualityColumns">
+		a.id AS "id",
+		a.loan_report_id AS "loanReportId",
+		a.communication_state AS "communicationState",
+		a.communication_remark AS "communicationRemark",
+		a.bad_evaluate AS "badEvaluate",
+		a.bad_evaluate_remark AS "badEvaluateRemark",
+		a.load_state AS "loadState",
+		a.load_state_remark AS "loadStateRemark",
+		a.customer_info_state AS "customerInfoState",
+		a.customer_info_state_remark AS "customerInfoStateRemark",
+		a.repayment_state AS "repaymentState",
+		a.repayment_remark AS "repaymentRemark",
+		a.cumtomer_quality_imgs AS "cumtomerQualityImgs",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag",
+		a.report_cumtomer_quality_other as "reportCumtomerQualityOther"
+	</sql>
+	
+	<sql id="reportCumtomerQualityJoins">
+	</sql>
+    
+	<select id="get" resultType="ReportCumtomerQuality">
+		SELECT 
+			<include refid="reportCumtomerQualityColumns"/>
+		FROM fyjf_t_report_cumtomer_quality a
+		<include refid="reportCumtomerQualityJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="getByReportId" resultType="ReportCumtomerQuality">
+		SELECT 
+			<include refid="reportCumtomerQualityColumns"/>
+		FROM fyjf_t_report_cumtomer_quality a
+		<include refid="reportCumtomerQualityJoins"/>
+		WHERE a.loan_report_id = #{reportId}
+	</select>
+	
+	<select id="findList" resultType="ReportCumtomerQuality">
+		SELECT 
+			<include refid="reportCumtomerQualityColumns"/>
+		FROM fyjf_t_report_cumtomer_quality a
+		<include refid="reportCumtomerQualityJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="ReportCumtomerQuality">
+		SELECT 
+			<include refid="reportCumtomerQualityColumns"/>
+		FROM fyjf_t_report_cumtomer_quality a
+		<include refid="reportCumtomerQualityJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO fyjf_t_report_cumtomer_quality(
+			id,
+			loan_report_id,
+			communication_state,
+			communication_remark,
+			bad_evaluate,
+			bad_evaluate_remark,
+			load_state,
+			load_state_remark,
+			customer_info_state,
+			customer_info_state_remark,
+			repayment_state,
+			repayment_remark,
+			cumtomer_quality_imgs,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag,
+			report_cumtomer_quality_other
+		) VALUES (
+			#{id},
+			#{loanReportId},
+			#{communicationState},
+			#{communicationRemark},
+			#{badEvaluate},
+			#{badEvaluateRemark},
+			#{loadState},
+			#{loadStateRemark},
+			#{customerInfoState},
+			#{customerInfoStateRemark},
+			#{repaymentState},
+			#{repaymentRemark},
+			#{cumtomerQualityImgs},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag},
+			#{reportCumtomerQualityOther}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE fyjf_t_report_cumtomer_quality 
+		<set>
+			<if test=" loanReportId!= null " >
+				loan_report_id = #{loanReportId},
+			</if>
+			<if test=" communicationState!= null " >
+				communication_state = #{communicationState},
+			</if>
+			<if test=" communicationRemark!= null " >
+				communication_remark = #{communicationRemark},
+			</if>
+			<if test=" badEvaluate!= null " >
+				bad_evaluate = #{badEvaluate},
+			</if>
+			<if test=" badEvaluateRemark!= null " >
+				bad_evaluate_remark = #{badEvaluateRemark},
+			</if>
+			<if test=" loadState!= null " >
+				load_state = #{loadState},
+			</if>
+			<if test=" loadStateRemark!= null " >
+				load_state_remark = #{loadStateRemark},
+			</if>
+			<if test=" customerInfoState!= null " >
+				customer_info_state = #{customerInfoState},
+			</if>
+			<if test=" customerInfoStateRemark!= null " >
+				customer_info_state_remark = #{customerInfoStateRemark},
+			</if>
+			<if test=" repaymentState!= null " >
+				repayment_state = #{repaymentState},
+			</if>
+			<if test=" repaymentRemark!= null " >
+				repayment_remark = #{repaymentRemark},
+			</if>
+			<if test=" cumtomerQualityImgs!= null " >
+				cumtomer_quality_imgs = #{cumtomerQualityImgs},
+			</if>
+			
+			<if test=" updateBy!= null" >
+				update_by = #{updateBy.id},
+			</if>
+			<if test=" updateDate!= null" >
+				update_date = #{updateDate},
+			</if>
+			<if test=" remarks!= null" >
+				remarks = #{remarks}
+			</if>
+			<if test=" reportCumtomerQualityOther!= null" >
+				report_cumtomer_quality_other = #{reportCumtomerQualityOther}
+			</if>
+		</set>
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE fyjf_t_report_cumtomer_quality SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

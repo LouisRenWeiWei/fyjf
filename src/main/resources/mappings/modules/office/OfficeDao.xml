@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fyjf.modules.office.dao.OfficeDao">
+    
+	<sql id="officeColumns">
+		a.id AS "id",
+		a.name AS "name",
+		a.parent_id AS "parent.id",
+		a.parent_ids AS "parentIds",
+		a.company_id AS "company.id",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag",
+		c.name as "company.name"
+	</sql>
+	
+	<sql id="officeJoins">
+		LEFT JOIN fyjf_t_company c on a.company_id = c.id
+	</sql>
+    
+	<select id="get" resultType="Office">
+		SELECT 
+			<include refid="officeColumns"/>
+		FROM fyjf_t_office a
+		<include refid="officeJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Office">
+		SELECT 
+			<include refid="officeColumns"/>
+		FROM fyjf_t_office a
+		<include refid="officeJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="parent != null and parent.id != null and parent.id != ''">
+				AND a.parent_id = #{parent.id}
+			</if>
+			<if test="company != null">
+				AND a.company_id = #{company.id}
+			</if>
+			<if test="parentIds != null and parentIds != ''">
+				AND a.parent_ids LIKE 
+					<if test="dbName == 'oracle'">'%'||#{parentIds}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{parentIds}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{parentIds},'%')</if>
+			</if>
+		</where>
+	</select>
+	
+	
+	
+	<select id="findBankOfficeList" resultType="Office">
+		SELECT 
+			<include refid="officeColumns"/>
+		FROM fyjf_t_office a 
+		where a.company_id = #{bankId}
+	</select>
+	
+	
+	
+	
+	<select id="findAllList" resultType="Office">
+		SELECT 
+			<include refid="officeColumns"/>
+		FROM fyjf_t_office a
+		<include refid="officeJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>
+	</select>
+	
+	<select id="findByParentIdsLike" resultType="Office">
+		SELECT
+			a.id,
+			a.parent_id AS "parent.id",
+			a.parent_ids
+		FROM fyjf_t_office a
+		<include refid="officeJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			AND a.parent_ids LIKE #{parentIds}
+		</where>
+	</select>
+	
+	<select id="findUserOfficeByUserId" resultType="Office">
+		SELECT 
+			<include refid="officeColumns"/>
+		from fyjf_t_user_office uo
+		LEFT JOIN fyjf_t_office a on uo.office_id = a.id
+		<include refid="officeJoins"/>
+		<where>
+			a.del_flag = '0' and uo.user_id = #{userId}
+		</where>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO fyjf_t_office(
+			id,
+			name,
+			parent_id,
+			parent_ids,
+			company_id,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{name},
+			#{parent.id},
+			#{parentIds},
+			#{company.id},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE fyjf_t_office SET 	
+			name = #{name},
+			parent_id = #{parent.id},
+			parent_ids = #{parentIds},
+			company_id = #{company.id},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="updateParentIds">
+		UPDATE fyjf_t_office SET 
+			parent_id = #{parent.id}, 
+			parent_ids = #{parentIds}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE fyjf_t_office SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id} OR parent_ids LIKE '%,'||#{id}||',%'
+	</update>
+	
+</mapper>

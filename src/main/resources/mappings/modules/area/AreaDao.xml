@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fyjf.modules.area.dao.AreaDao">
+    
+	<sql id="areaColumns">
+		a.id AS "id",
+		a.parent_id AS "parent.id",
+		a.name AS "name",
+		a.level AS "level",
+		a.longitude AS "longitude",
+		a.latitude AS "latitude"
+	</sql>
+	
+	<sql id="areaJoins">
+	</sql>
+    
+	<select id="get" resultType="Area">
+		SELECT 
+			<include refid="areaColumns"/>
+		FROM fyjf_t_area a
+		<include refid="areaJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Area">
+		SELECT 
+			<include refid="areaColumns"/>
+		FROM fyjf_t_area a
+		<include refid="areaJoins"/>
+		<where>
+			a.level = #{level}
+			<if test="parent != null and parent.id != null and parent.id != ''">
+				AND a.parent_id = #{parent.id}
+			</if>
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+		</where>
+	</select>
+	
+	<select id="findAllList" resultType="Area">
+		SELECT 
+			<include refid="areaColumns"/>
+		FROM fyjf_t_area a
+		<include refid="areaJoins"/>
+		<where>
+			
+		</where>
+	</select>
+	
+	<select id="findByParentIdsLike" resultType="Area">
+		SELECT
+			a.id,
+			a.parent_id AS "parent.id",
+			a.parent_ids
+		FROM fyjf_t_area a
+		<include refid="areaJoins"/>
+		<where>
+			
+			AND a.parent_ids LIKE #{parentIds}
+		</where>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO fyjf_t_area(
+			id,
+			parent_id,
+			name,
+			level,
+			longitude,
+			latitude
+		) VALUES (
+			#{id},
+			#{parent.id},
+			#{name},
+			#{level},
+			#{longitude},
+			#{latitude}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE fyjf_t_area SET 	
+			parent_id = #{parent.id},
+			name = #{name},
+			level = #{level},
+			longitude = #{longitude},
+			latitude = #{latitude}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="updateParentIds">
+		UPDATE fyjf_t_area SET 
+			parent_id = #{parent.id}, 
+			parent_ids = #{parentIds}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM fyjf_t_area
+		WHERE id = #{id} OR parent_ids LIKE '%,'||#{id}||',%'
+	</update>
+	
+</mapper>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fyjf.modules.user.dao.UserDao">
+    
+	<sql id="userColumns">
+		a.id AS "id",
+		a.account AS "account",
+		a.passwd AS "passwd",
+		a.name AS "name",
+		a.telphone AS "telphone",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag",
+		c.id as "company.id",
+		c.name as "company.name",
+		o.id as "office.id",
+		o.name as "office.name"
+	</sql>
+	
+	<sql id="userJoins">
+		LEFT JOIN fyjf_t_user_office uo on a.id = uo.user_id
+		LEFT JOIN fyjf_t_company c on uo.company_id = c.id
+		LEFT JOIN fyjf_t_office o on uo.office_id = o.id
+	</sql>
+    
+	<select id="get" resultType="User">
+		SELECT 
+			<include refid="userColumns"/>
+		FROM fyjf_t_user a
+		<include refid="userJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="getByAccount" resultType="User">
+		SELECT 
+			<include refid="userColumns"/>
+		FROM fyjf_t_user a
+		<include refid="userJoins"/>
+		WHERE a.account = #{account}
+	</select>
+	
+	<select id="findList" resultType="User">
+		SELECT 
+			<include refid="userColumns"/>
+		FROM fyjf_t_user a
+		<include refid="userJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="company != null">
+				AND c.id = #{company.id}
+			</if>
+			<if test="office != null">
+				AND o.id = #{office.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	
+	<insert id="insert">
+		INSERT INTO fyjf_t_user(
+			id,
+			account,
+			passwd,
+			name,
+			telphone,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{account},
+			#{passwd},
+			#{name},
+			#{telphone},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE fyjf_t_user SET 	
+			account = #{account},
+			passwd = #{passwd},
+			name = #{name},
+			telphone = #{telphone},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE fyjf_t_user SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

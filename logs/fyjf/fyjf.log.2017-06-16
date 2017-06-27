@@ -1,0 +1,3 @@
+2017-06-16 09:04:12,765 [main] WARN  [org.apache.pdfbox.pdmodel.font.FileSystemFontProvider] - New fonts found, font cache will be re-built
+2017-06-16 09:04:12,766 [main] WARN  [org.apache.pdfbox.pdmodel.font.FileSystemFontProvider] - Building on-disk font cache, this may take a while
+2017-06-16 09:04:13,226 [main] WARN  [org.apache.pdfbox.pdmodel.font.FileSystemFontProvider] - Finished building on-disk font cache, found 389 fonts

@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fyjf.modules.report.dao.ReportFinanceDao">
+    
+	<sql id="reportFinanceColumns">
+		a.id AS "id",
+		a.loan_report_id AS "loanReportId",
+		a.finance_purpose AS "financePurpose",
+		a.finance_purpose_actual AS "financePurposeActual",
+		a.used_by_allowed AS "usedByAllowed",
+		a.money_in_place AS "moneyInPlace",
+		a.repayment_state AS "repaymentState",
+		a.aplay_deferred AS "aplayDeferred",
+		a.debt_state AS "debtState",
+		a.repayment_state_remark AS "repaymentStateRemark",
+		a.other_finace_credit_amount AS "otherFinaceCreditAmount",
+		a.other_finace_loan AS "otherFinaceLoan",
+		a.other_finace_other_amount AS "otherFinaceOtherAmount",
+		a.loan_has_bad_record_state AS "loanHasBadRecordState",
+		a.loan_has_bad_record_amount AS "loanHasBadRecordAmount",
+		a.outer_guarantee_loan_amount AS "outerGuaranteeLoanAmount",
+		a.outer_guarantee_loan AS "outerGuaranteeLoan",
+		a.outer_guarantee_loan_mortgage AS "outerGuaranteeLoanMortgage",
+		a.finance_imgs AS "financeImgs",
+		a.report_finance_other AS "reportFinanceOther",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="reportFinanceJoins">
+	</sql>
+	
+	<select id="get" resultType="ReportFinance">
+		SELECT 
+			<include refid="reportFinanceColumns"/>
+		FROM fyjf_t_report_finance a
+		<include refid="reportFinanceJoins"/>
+		WHERE a.id = #{id}
+	</select>
+    
+	<select id="getByReportId" resultType="ReportFinance">
+		SELECT 
+			<include refid="reportFinanceColumns"/>
+		FROM fyjf_t_report_finance a
+		<include refid="reportFinanceJoins"/>
+		WHERE a.loan_report_id = #{reportId}
+	</select>
+	
+	
+	
+	<select id="findList" resultType="ReportFinance">
+		SELECT 
+			<include refid="reportFinanceColumns"/>
+		FROM fyjf_t_report_finance a
+		<include refid="reportFinanceJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="ReportFinance">
+		SELECT 
+			<include refid="reportFinanceColumns"/>
+		FROM fyjf_t_report_finance a
+		<include refid="reportFinanceJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO fyjf_t_report_finance(
+			id,
+			loan_report_id,
+			finance_purpose,
+			finance_purpose_actual,
+			used_by_allowed,
+			money_in_place,
+			repayment_state,
+			aplay_deferred,
+			debt_state,
+			repayment_state_remark,
+			other_finace_credit_amount,
+			other_finace_loan,
+			other_finace_other_amount,
+			loan_has_bad_record_state,
+			loan_has_bad_record_amount,
+			outer_guarantee_loan_amount,
+			outer_guarantee_loan,
+			outer_guarantee_loan_mortgage,
+			finance_imgs,
+			report_finance_other,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{loanReportId},
+			#{financePurpose},
+			#{financePurposeActual},
+			#{usedByAllowed},
+			#{moneyInPlace},
+			#{repaymentState},
+			#{aplayDeferred},
+			#{debtState},
+			#{repaymentStateRemark},
+			#{otherFinaceCreditAmount},
+			#{otherFinaceLoan},
+			#{otherFinaceOtherAmount},
+			#{loanHasBadRecordState},
+			#{loanHasBadRecordAmount},
+			#{outerGuaranteeLoanAmount},
+			#{outerGuaranteeLoan},
+			#{outerGuaranteeLoanMortgage},
+			#{financeImgs},
+			#{reportFinanceOther},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE fyjf_t_report_finance 
+		<set>
+			<if test=" loanReportId!= null " >
+				loan_report_id = #{loanReportId},
+			</if>
+			<if test=" financePurpose!= null " >
+				finance_purpose = #{financePurpose},
+			</if>
+			<if test=" financePurposeActual!= null " >
+				finance_purpose_actual = #{financePurposeActual},
+			</if>
+			<if test=" usedByAllowed!= null " >
+				used_by_allowed = #{usedByAllowed},
+			</if>
+			<if test=" moneyInPlace!= null " >
+				money_in_place = #{moneyInPlace},
+			</if>
+			<if test=" repaymentState!= null " >
+				repayment_state = #{repaymentState},
+			</if>
+			<if test=" aplayDeferred!= null " >
+				aplay_deferred = #{aplayDeferred},
+			</if>
+			<if test=" debtState!= null " >
+				debt_state = #{debtState},
+			</if>
+			<if test=" repaymentStateRemark!= null " >
+				repayment_state_remark = #{repaymentStateRemark},
+			</if>
+			<if test=" otherFinaceCreditAmount!= null " >
+				other_finace_credit_amount = #{otherFinaceCreditAmount},
+			</if>
+			<if test=" otherFinaceLoan!= null " >
+				other_finace_loan = #{otherFinaceLoan},
+			</if>
+			<if test=" otherFinaceOtherAmount!= null " >
+				other_finace_other_amount = #{otherFinaceOtherAmount},
+			</if>
+			<if test=" loanHasBadRecordState!= null " >
+				loan_has_bad_record_state = #{loanHasBadRecordState},
+			</if>
+			<if test=" loanHasBadRecordAmount!= null " >
+				loan_has_bad_record_amount = #{loanHasBadRecordAmount},
+			</if>
+			<if test=" outerGuaranteeLoanAmount!= null " >
+				outer_guarantee_loan_amount = #{outerGuaranteeLoanAmount},
+			</if>
+			<if test=" outerGuaranteeLoan!= null " >
+				outer_guarantee_loan = #{outerGuaranteeLoan},
+			</if>
+			<if test=" outerGuaranteeLoanMortgage!= null " >
+				outer_guarantee_loan_mortgage = #{outerGuaranteeLoanMortgage},
+			</if>
+			<if test=" financeImgs!= null " >
+				finance_imgs = #{financeImgs},
+			</if>
+			<if test=" reportFinanceOther!= null " >
+				report_finance_other = #{reportFinanceOther},
+			</if>
+			<if test=" updateBy!= null" >
+				update_by = #{updateBy.id},
+			</if>
+			<if test=" updateDate!= null " >
+				update_date = #{updateDate},
+			</if>
+			<if test=" remarks!= null " >
+				remarks = #{remarks}
+			</if>
+		</set>
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE fyjf_t_report_finance SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

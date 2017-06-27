@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fyjf.modules.report.dao.ReportCustomerFinancialDao">
+    
+	<sql id="reportCustomerFinancialColumns">
+		a.id AS "id",
+		a.loan_report_id AS "loanReportId",
+		a.customer_account_in_bank AS "customerAccountInBank",
+		a.money_during_check AS "moneyDuringCheck",
+		a.customer_money_change_state AS "customerMoneyChangeState",
+		a.customer_money_return_state AS "customerMoneyReturnState",
+		a.customer_account_remark AS "customerAccountRemark",
+		a.customer_finance_type AS "customerFinanceType",
+		a.customer_finace_inc_dec_sale_cur AS "customerFinaceIncDecSaleCur",
+		a.customer_finace_inc_dec_sale_pre AS "customerFinaceIncDecSalePre",
+		a.customer_finace_inc_dec_profit_cur AS "customerFinaceIncDecProfitCur",
+		a.customer_finace_inc_dec_profit_pre AS "customerFinaceIncDecProfitPre",
+		a.customer_finace_inc_dec_consum_cur AS "customerFinaceIncDecConsumCur",
+		a.customer_finace_inc_dec_consum_pre AS "customerFinaceIncDecConsumPre",
+		a.customer_finace_assets_account_need_cur AS "customerFinaceAssetsAccountNeedCur",
+		a.customer_finace_assets_account_need_pre AS "customerFinaceAssetsAccountNeedPre",
+		a.customer_finace_assets_inventory_cur AS "customerFinaceAssetsInventoryCur",
+		a.customer_finace_assets_inventory_pre AS "customerFinaceAssetsInventoryPre",
+		a.customer_finace_debt_account_need_cur AS "customerFinaceDebtAccountNeedCur",
+		a.customer_finace_debt_account_need_pre AS "customerFinaceDebtAccountNeedPre",
+		a.customer_finace_debt_borrowing_cur AS "customerFinaceDebtBorrowingCur",
+		a.customer_finace_debt_borrowing_pre AS "customerFinaceDebtBorrowingPre",
+		a.customer_finace_debt_guaranty_cur AS "customerFinaceDebtGuarantyCur",
+		a.customer_finace_debt_guaranty_pre AS "customerFinaceDebtGuarantyPre",
+		a.customer_finace_ratio_assets_liabilities_cur AS "customerFinaceRatioAssetsLiabilitiesCur",
+		a.customer_finace_ratio_assets_liabilities_pre AS "customerFinaceRatioAssetsLiabilitiesPre",
+		a.customer_finace_ratio_current_ratio_cur AS "customerFinaceRatioCurrentRatioCur",
+		a.customer_finace_ratio_current_ratio_pre AS "customerFinaceRatioCurrentRatioPre",
+		a.customer_finace_ratio_account_turnround_rate_cur AS "customerFinaceRatioAccountTurnroundRateCur",
+		a.customer_finace_ratio_account_turnround_rate_pre AS "customerFinaceRatioAccountTurnroundRatePre",
+		a.customer_finace_ratio_sale_profit_cur AS "customerFinaceRatioSaleProfitCur",
+		a.customer_finace_ratio_sale_profit_pre AS "customerFinaceRatioSaleProfitPre",
+		a.customer_finace_ratio_inventory_cur AS "customerFinaceRatioInventoryCur",
+		a.customer_finace_ratio_inventory_pre AS "customerFinaceRatioInventoryPre",
+		a.customer_finace_forecast_sale AS "customerFinaceForecastSale",
+		a.customer_finace_forecast_profit AS "customerFinaceForecastProfit",
+		a.customer_finace_forecast_cash AS "customerFinaceForecastCash",
+		a.customer_finace_forecast_business_cash AS "customerFinaceForecastBusinessCash",
+		a.customer_finace_forecast_remark AS "customerFinaceForecastRemark",
+		a.customer_effect_finance_waring AS "customerEffectFinanceWaring",
+		a.customer_effect_pay_money AS "customerEffectPayMoney",
+		a.customer_effect_pay_money_amount AS "customerEffectPayMoneyAmount",
+		a.customer_effect_pay_profit AS "customerEffectPayProfit",
+		a.customer_effect_pay_profit_remark AS "customerEffectPayProfitRemark",
+		a.customer_financial_imgs AS "customerFinancialImgs",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag",
+		a.report_customer_financial_other as "reportCustomerFinancialOther"
+	</sql>
+	
+	<sql id="reportCustomerFinancialJoins">
+	</sql>
+    
+	<select id="get" resultType="ReportCustomerFinancial">
+		SELECT 
+			<include refid="reportCustomerFinancialColumns"/>
+		FROM fyjf_t_report_customer_financial a
+		<include refid="reportCustomerFinancialJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="getPre" resultType="ReportCustomerFinancial">
+		SELECT 
+			<include refid="reportCustomerFinancialColumns"/>
+		FROM fyjf_t_report_customer_financial a
+		LEFT JOIN fyjf_t_report  r on a.loan_report_id = r.id
+		 <![CDATA[ 
+			where date_format(r.create_date, '%Y-%m') <=date_format(DATE_SUB(curdate(), INTERVAL 1 MONTH),'%Y-%m') 
+			ORDER BY r.create_date DESC
+			LIMIT 0,1
+		 ]]>
+	</select>
+	
+	
+	
+	<select id="getByReportId" resultType="ReportCustomerFinancial">
+		SELECT 
+			<include refid="reportCustomerFinancialColumns"/>
+		FROM fyjf_t_report_customer_financial a
+		<include refid="reportCustomerFinancialJoins"/>
+		WHERE a.loan_report_id = #{reportId}
+	</select>
+	
+	
+	<select id="findList" resultType="ReportCustomerFinancial">
+		SELECT 
+			<include refid="reportCustomerFinancialColumns"/>
+		FROM fyjf_t_report_customer_financial a
+		<include refid="reportCustomerFinancialJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findListByCustomerId" resultType="ReportCustomerFinancial">
+		SELECT 
+			<include refid="reportCustomerFinancialColumns"/>
+		FROM fyjf_t_report_customer_financial a
+		LEFT JOIN fyjf_t_report r on a.loan_report_id = r.id
+		where r.customer_id = '182ff27155c44062af63e986a9acb69b'
+		ORDER BY r.create_date DESC
+		LIMIT 0,12
+	</select>
+	
+	
+	
+	<select id="findAllList" resultType="ReportCustomerFinancial">
+		SELECT 
+			<include refid="reportCustomerFinancialColumns"/>
+		FROM fyjf_t_report_customer_financial a
+		<include refid="reportCustomerFinancialJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO fyjf_t_report_customer_financial(
+			id,
+			loan_report_id,
+			customer_account_in_bank,
+			money_during_check,
+			customer_money_change_state,
+			customer_money_return_state,
+			customer_account_remark,
+			customer_finance_type,
+			customer_finace_inc_dec_sale_cur,
+			customer_finace_inc_dec_sale_pre,
+			customer_finace_inc_dec_profit_cur,
+			customer_finace_inc_dec_profit_pre,
+			customer_finace_inc_dec_consum_cur,
+			customer_finace_inc_dec_consum_pre,
+			customer_finace_assets_account_need_cur,
+			customer_finace_assets_account_need_pre,
+			customer_finace_assets_inventory_cur,
+			customer_finace_assets_inventory_pre,
+			customer_finace_debt_account_need_cur,
+			customer_finace_debt_account_need_pre,
+			customer_finace_debt_borrowing_cur,
+			customer_finace_debt_borrowing_pre,
+			customer_finace_debt_guaranty_cur,
+			customer_finace_debt_guaranty_pre,
+			customer_finace_ratio_assets_liabilities_cur,
+			customer_finace_ratio_assets_liabilities_pre,
+			customer_finace_ratio_current_ratio_cur,
+			customer_finace_ratio_current_ratio_pre,
+			customer_finace_ratio_account_turnround_rate_cur,
+			customer_finace_ratio_account_turnround_rate_pre,
+			customer_finace_ratio_sale_profit_cur,
+			customer_finace_ratio_sale_profit_pre,
+			customer_finace_ratio_inventory_cur,
+			customer_finace_ratio_inventory_pre,
+			customer_finace_forecast_sale,
+			customer_finace_forecast_profit,
+			customer_finace_forecast_cash,
+			customer_finace_forecast_business_cash,
+			customer_finace_forecast_remark,
+			customer_effect_finance_waring,
+			customer_effect_pay_money,
+			customer_effect_pay_money_amount,
+			customer_effect_pay_profit,
+			customer_effect_pay_profit_remark,
+			customer_financial_imgs,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag,
+			report_customer_financial_other
+		) VALUES (
+			#{id},
+			#{loanReportId},
+			#{customerAccountInBank},
+			#{moneyDuringCheck},
+			#{customerMoneyChangeState},
+			#{customerMoneyReturnState},
+			#{customerAccountRemark},
+			#{customerFinanceType},
+			#{customerFinaceIncDecSaleCur},
+			#{customerFinaceIncDecSalePre},
+			#{customerFinaceIncDecProfitCur},
+			#{customerFinaceIncDecProfitPre},
+			#{customerFinaceIncDecConsumCur},
+			#{customerFinaceIncDecConsumPre},
+			#{customerFinaceAssetsAccountNeedCur},
+			#{customerFinaceAssetsAccountNeedPre},
+			#{customerFinaceAssetsInventoryCur},
+			#{customerFinaceAssetsInventoryPre},
+			#{customerFinaceDebtAccountNeedCur},
+			#{customerFinaceDebtAccountNeedPre},
+			#{customerFinaceDebtBorrowingCur},
+			#{customerFinaceDebtBorrowingPre},
+			#{customerFinaceDebtGuarantyCur},
+			#{customerFinaceDebtGuarantyPre},
+			#{customerFinaceRatioAssetsLiabilitiesCur},
+			#{customerFinaceRatioAssetsLiabilitiesPre},
+			#{customerFinaceRatioCurrentRatioCur},
+			#{customerFinaceRatioCurrentRatioPre},
+			#{customerFinaceRatioAccountTurnroundRateCur},
+			#{customerFinaceRatioAccountTurnroundRatePre},
+			#{customerFinaceRatioSaleProfitCur},
+			#{customerFinaceRatioSaleProfitPre},
+			#{customerFinaceRatioInventoryCur},
+			#{customerFinaceRatioInventoryPre},
+			#{customerFinaceForecastSale},
+			#{customerFinaceForecastProfit},
+			#{customerFinaceForecastCash},
+			#{customerFinaceForecastBusinessCash},
+			#{customerFinaceForecastRemark},
+			#{customerEffectFinanceWaring},
+			#{customerEffectPayMoney},
+			#{customerEffectPayMoneyAmount},
+			#{customerEffectPayProfit},
+			#{customerEffectPayProfitRemark},
+			#{customerFinancialImgs},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag},
+			#{reportCustomerFinancialOther}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE fyjf_t_report_customer_financial
+		<set>
+			<if test=" loanReportId!= null " >
+				loan_report_id = #{loanReportId},
+			</if>
+			<if test=" customerAccountInBank!= null " >
+				customer_account_in_bank = #{customerAccountInBank},
+			</if>
+			
+			<if test=" moneyDuringCheck!= null " >
+				money_during_check = #{moneyDuringCheck},
+			</if>
+			<if test=" customerMoneyChangeState!= null " >
+				customer_money_change_state = #{customerMoneyChangeState},
+			</if>
+			<if test=" customerMoneyReturnState!= null " >
+				customer_money_return_state = #{customerMoneyReturnState},
+			</if>
+			<if test=" customerAccountRemark!= null " >
+				customer_account_remark = #{customerAccountRemark},
+			</if>
+			
+			<if test=" customerFinanceType!= null " >
+				customer_finance_type = #{customerFinanceType},
+			</if>
+			<if test=" customerFinaceIncDecSaleCur!= null " >
+				customer_finace_inc_dec_sale_cur = #{customerFinaceIncDecSaleCur},
+			</if>
+			<if test=" customerFinaceIncDecSalePre!= null " >
+				customer_finace_inc_dec_sale_pre = #{customerFinaceIncDecSalePre},
+			</if>
+			<if test=" customerFinaceIncDecProfitCur!= null " >
+				customer_finace_inc_dec_profit_cur = #{customerFinaceIncDecProfitCur},
+			</if>
+			<if test=" customerFinaceIncDecProfitPre!= null " >
+				customer_finace_inc_dec_profit_pre = #{customerFinaceIncDecProfitPre},
+			</if>
+			
+			<if test=" customerFinaceIncDecConsumCur!= null " >
+				customer_finace_inc_dec_consum_cur = #{customerFinaceIncDecConsumCur},
+			</if>
+			<if test=" customerFinaceIncDecConsumPre!= null " >
+				customer_finace_inc_dec_consum_pre = #{customerFinaceIncDecConsumPre},
+			</if>
+			<if test=" customerFinaceAssetsAccountNeedCur!= null " >
+				customer_finace_assets_account_need_cur = #{customerFinaceAssetsAccountNeedCur},
+			</if>
+			<if test=" customerFinaceAssetsAccountNeedPre!= null " >
+				customer_finace_assets_account_need_pre = #{customerFinaceAssetsAccountNeedPre},
+			</if>
+			
+			<if test=" customerFinaceAssetsInventoryCur!= null " >
+				customer_finace_assets_inventory_cur = #{customerFinaceAssetsInventoryCur},
+			</if>
+			<if test=" customerFinaceAssetsInventoryPre!= null " >
+				customer_finace_assets_inventory_pre = #{customerFinaceAssetsInventoryPre},
+			</if>
+			<if test=" customerFinaceDebtAccountNeedCur!= null " >
+				customer_finace_debt_account_need_cur = #{customerFinaceDebtAccountNeedCur},
+			</if>
+			<if test=" customerFinaceDebtAccountNeedPre!= null " >
+				customer_finace_debt_account_need_pre = #{customerFinaceDebtAccountNeedPre},
+			</if>
+			
+			<if test=" customerFinaceDebtBorrowingCur!= null " >
+				customer_finace_debt_borrowing_cur = #{customerFinaceDebtBorrowingCur},
+			</if>
+			<if test=" customerFinaceDebtBorrowingPre!= null " >
+				customer_finace_debt_borrowing_pre = #{customerFinaceDebtBorrowingPre},
+			</if>
+			<if test=" customerFinaceDebtGuarantyCur!= null " >
+				customer_finace_debt_guaranty_cur = #{customerFinaceDebtGuarantyCur},
+			</if>
+			<if test=" customerFinaceDebtGuarantyPre!= null " >
+				customer_finace_debt_guaranty_pre = #{customerFinaceDebtGuarantyPre},
+			</if>
+			
+			<if test=" customerFinaceRatioAssetsLiabilitiesCur!= null " >
+				customer_finace_ratio_assets_liabilities_cur = #{customerFinaceRatioAssetsLiabilitiesCur},
+			</if>
+			<if test=" customerFinaceRatioAssetsLiabilitiesPre!= null " >
+				customer_finace_ratio_assets_liabilities_pre = #{customerFinaceRatioAssetsLiabilitiesPre},
+			</if>
+			<if test=" customerFinaceRatioCurrentRatioCur!= null " >
+				customer_finace_ratio_current_ratio_cur = #{customerFinaceRatioCurrentRatioCur},
+			</if>
+			<if test=" customerFinaceRatioCurrentRatioPre!= null " >
+				customer_finace_ratio_current_ratio_pre = #{customerFinaceRatioCurrentRatioPre},
+			</if>
+			
+			<if test=" customerFinaceRatioAccountTurnroundRateCur!= null " >
+				customer_finace_ratio_account_turnround_rate_cur = #{customerFinaceRatioAccountTurnroundRateCur},
+			</if>
+			<if test=" customerFinaceRatioAccountTurnroundRatePre!= null " >
+				customer_finace_ratio_account_turnround_rate_pre = #{customerFinaceRatioAccountTurnroundRatePre},
+			</if>
+			<if test=" customerFinaceRatioSaleProfitCur!= null " >
+				customer_finace_ratio_sale_profit_cur = #{customerFinaceRatioSaleProfitCur},
+			</if>
+			<if test=" customerFinaceRatioSaleProfitPre!= null " >
+				customer_finace_ratio_sale_profit_pre = #{customerFinaceRatioSaleProfitPre},
+			</if>
+			<if test=" customerFinaceRatioInventoryCur!= null " >
+				customer_finace_ratio_inventory_cur = #{customerFinaceRatioInventoryCur},
+			</if>
+			<if test=" customerFinaceRatioInventoryPre!= null " >
+				customer_finace_ratio_inventory_pre = #{customerFinaceRatioInventoryPre},
+			</if>
+			
+			<if test=" customerFinaceForecastSale!= null " >
+				customer_finace_forecast_sale = #{customerFinaceForecastSale},
+			</if>
+			<if test=" customerFinaceForecastProfit!= null " >
+				customer_finace_forecast_profit = #{customerFinaceForecastProfit},
+			</if>
+			<if test=" customerFinaceForecastCash!= null " >
+				customer_finace_forecast_cash = #{customerFinaceForecastCash},
+			</if>
+			<if test=" customerFinaceForecastBusinessCash!= null " >
+				customer_finace_forecast_business_cash = #{customerFinaceForecastBusinessCash},
+			</if>
+			<if test=" customerFinaceForecastRemark!= null " >
+				customer_finace_forecast_remark = #{customerFinaceForecastRemark},
+			</if>
+			
+			<if test=" customerEffectFinanceWaring!= null " >
+				customer_effect_finance_waring = #{customerEffectFinanceWaring},
+			</if>
+			<if test=" customerEffectPayMoney!= null " >
+				customer_effect_pay_money = #{customerEffectPayMoney},
+			</if>
+			<if test=" customerEffectPayMoneyAmount!= null " >
+				customer_effect_pay_money_amount = #{customerEffectPayMoneyAmount},
+			</if>
+			<if test=" customerEffectPayProfit!= null " >
+				customer_effect_pay_profit = #{customerEffectPayProfit},
+			</if>
+			<if test=" customerEffectPayProfitRemark!= null " >
+				customer_effect_pay_profit_remark = #{customerEffectPayProfitRemark},
+			</if>
+			<if test=" customerFinancialImgs!= null " >
+				customer_financial_imgs = #{customerFinancialImgs},
+			</if>
+			
+			
+			<if test=" updateBy!= null" >
+				update_by = #{updateBy.id},
+			</if>
+			<if test=" updateDate!= null" >
+				update_date = #{updateDate},
+			</if>
+			<if test=" remarks!= null" >
+				remarks = #{remarks}
+			</if>
+			<if test=" reportCustomerFinancialOther!= null" >
+				report_customer_financial_other = #{reportCustomerFinancialOther}
+			</if>
+		</set>
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE fyjf_t_report_customer_financial SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
