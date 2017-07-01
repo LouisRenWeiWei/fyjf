@@ -46,9 +46,9 @@ public class CompanyService extends CrudService<CompanyDao, Company> {
 		super.delete(company);
 	}
 
-	public List<Map<String,Object>> findBankList() {
+	public List<Map<String,Object>> findBankList(Company company) {
 		// TODO Auto-generated method stub
-		return dao.findBankList();
+		return dao.findBankList(company);
 	}
 	
 }

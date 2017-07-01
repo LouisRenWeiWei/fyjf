@@ -21,6 +21,6 @@ public interface CompanyDao extends CrudDao<Company> {
 
 	Company findUserCompanyByUserOfficeId(String officeId);
 
-	List<Map<String, Object>> findBankList();
+	List<Map<String, Object>> findBankList(Company company);
 	
 }

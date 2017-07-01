@@ -3,6 +3,9 @@
  */
 package com.fyjf.modules.customer.dao;
 
+import java.util.List;
+import java.util.Map;
+
 import com.fyjf.common.persistence.CrudDao;
 import com.fyjf.common.persistence.annotation.MyBatisDao;
 import com.fyjf.modules.customer.entity.Customer;
@@ -15,5 +18,7 @@ import com.fyjf.modules.customer.entity.Customer;
  */
 @MyBatisDao
 public interface CustomerDao extends CrudDao<Customer> {
+
+	List<Map<String, Object>> findListByApp(Map<String, Object> param);
 	
 }

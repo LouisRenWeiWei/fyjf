@@ -23,12 +23,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.opensymphony.module.sitemesh.Page;
 import com.alibaba.fastjson.JSONObject;
 import com.fyjf.common.config.Global;
+import com.fyjf.common.persistence.Page;
 import com.fyjf.common.web.BaseController;
 import com.fyjf.common.utils.PageUtils;
 import com.fyjf.common.utils.StringUtils;
+import com.fyjf.modules.app.entity.AppVersion;
 import com.fyjf.modules.industry.entity.IndustryType;
 import com.fyjf.modules.loadtype.entity.LoanType;
 import com.fyjf.modules.loadtype.service.LoanTypeService;
@@ -81,18 +82,18 @@ public class LoanTypeController extends BaseController {
 		BaseVO vo = new BaseVO();
 		vo.setCode(BaseVO.CODE_SUCCESS);
 		LoanType loanType =  new LoanType();
-		//loanType.setPage(JSONObject.toJavaObject(param, Page.class));
-		vo.setData(loanTypeService.findList(loanType));
+		Page page = new Page<LoanType>(param.getIntValue("pageNo"),param.getIntValue("pageSize"));
+		vo.setData(loanTypeService.findPage(page, loanType));		
 		return vo;
 	}
 	
-	
-	@RequiresPermissions("loadtype:loanType:edit")
 	@RequestMapping(value = "delete")
-	public String delete(LoanType loanType, RedirectAttributes redirectAttributes) {
+	@ResponseBody
+	public BaseVO delete(LoanType loanType) {
 		loanTypeService.delete(loanType);
-		addMessage(redirectAttributes, "删除信贷品种类型成功");
-		return "redirect:"+Global.getAdminPath()+"/loadtype/loanType/list?repage";
+		BaseVO vo = new BaseVO();
+		vo.setCode(BaseVO.CODE_SUCCESS);
+		return vo;
 	}
 
 

@@ -5,13 +5,20 @@ package com.fyjf.modules.role.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.fyjf.common.persistence.Page;
 import com.fyjf.common.service.CrudService;
 import com.fyjf.modules.role.entity.Role;
+import com.fyjf.modules.role.entity.RoleMenu;
+import com.fyjf.modules.sys.utils.UserUtils;
+import com.fyjf.modules.company.entity.Company;
 import com.fyjf.modules.role.dao.RoleDao;
+import com.fyjf.modules.role.dao.RoleMenuDao;
 
 /**
  * 角色Service
@@ -22,6 +29,9 @@ import com.fyjf.modules.role.dao.RoleDao;
 @Service
 @Transactional(readOnly = true)
 public class RoleService extends CrudService<RoleDao, Role> {
+	
+	@Autowired
+	RoleMenuDao roleMenuDao;
 
 	public Role get(String id) {
 		return super.get(id);
@@ -43,6 +53,27 @@ public class RoleService extends CrudService<RoleDao, Role> {
 	@Transactional(readOnly = false)
 	public void delete(Role role) {
 		super.delete(role);
+	}
+
+	@Transactional(readOnly = false)
+	public void saveRoleData(JSONObject param) {
+		// TODO Auto-generated method stub
+		Role role = JSONObject.toJavaObject(param.getJSONObject("role"), Role.class);
+		String companyId = param.getString("companyId");
+		if(org.springframework.util.StringUtils.isEmpty(companyId))companyId= UserUtils.getUser().getCompany().getId();
+		role.setCompany(new Company(companyId));
+		save(role);
+		RoleMenu roleMenu = new RoleMenu();
+		roleMenu.setRoleId(role.getId());
+		roleMenuDao.deleteAllByRole(roleMenu);
+		//
+		JSONArray permission = param.getJSONArray("permission");
+		for(int i=0;i<permission.size();i++){			
+			RoleMenu tmp = new RoleMenu();
+			tmp.setRoleId(role.getId());
+			tmp.setMenuId(permission.getString(i));
+			roleMenuDao.insert(tmp);
+		}
 	}
 
 	

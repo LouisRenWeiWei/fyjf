@@ -3,6 +3,9 @@
  */
 package com.fyjf.modules.company.web;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -23,9 +26,11 @@ import com.fyjf.common.config.Global;
 import com.fyjf.common.persistence.Page;
 import com.fyjf.common.web.BaseController;
 import com.fyjf.common.utils.StringUtils;
+import com.fyjf.modules.app.entity.AppVersion;
 import com.fyjf.modules.area.entity.Area;
 import com.fyjf.modules.company.entity.Company;
 import com.fyjf.modules.company.service.CompanyService;
+import com.fyjf.modules.customer.entity.Customer;
 import com.fyjf.modules.sys.utils.UserUtils;
 import com.fyjf.modules.user.entity.User;
 import com.fyjf.vo.BaseVO;
@@ -88,10 +93,16 @@ public class CompanyController extends BaseController {
 	
 	@RequestMapping(value = "list/bank", method = RequestMethod.POST)
 	@ResponseBody
-	public BaseVO bank_list() {
+	public BaseVO bank_list(@RequestBody JSONObject param) {
 		BaseVO vo = new BaseVO();
 		vo.setCode(BaseVO.CODE_SUCCESS);
-		vo.setData(companyService.findBankList());
+		Page page = new Page<Company>(param.getIntValue("pageNo"),param.getIntValue("pageSize"));
+		Company company = new Company(); 
+		company.setId("0");
+		company.setPage(page);
+		List<Map<String,Object>> result = companyService.findBankList(company);
+		page.setList(result);
+		vo.setData(page);
 		return vo;
 	}
 
@@ -113,12 +124,14 @@ public class CompanyController extends BaseController {
 		return "redirect:"+Global.getAdminPath()+"/company/company/list?repage";
 	}
 	
-	@RequiresPermissions("company:company:edit")
+	
 	@RequestMapping(value = "delete")
-	public String delete(Company company, RedirectAttributes redirectAttributes) {
+	@ResponseBody
+	public BaseVO delete(Company company) {
 		companyService.delete(company);
-		addMessage(redirectAttributes, "删除企业成功");
-		return "redirect:"+Global.getAdminPath()+"/company/company/list?repage";
+		BaseVO vo = new BaseVO();
+		vo.setCode(BaseVO.CODE_SUCCESS);
+		return vo;
 	}
 
 }

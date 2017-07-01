@@ -57,7 +57,7 @@
 		FROM fyjf_t_customer a
 		<include refid="customerJoins"/>
 		<where>
-			a.del_flag = #{DEL_FLAG_NORMAL} 
+			a.del_flag = #{DEL_FLAG_NORMAL}
 			<if test="name != null and name != ''">
 				AND a.name LIKE 
 					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
@@ -80,6 +80,38 @@
 			</otherwise>
 		</choose>
 	</select>
+	
+	
+	<select id="findListByApp" resultType="Map">
+		SELECT a.id AS "id", a.name AS "name", a.customerState as "customerState",a.create_date AS "createDate",
+		a4.name AS "areaName", 
+		it.name as "industryTypeName",
+		r.id as "reportId",
+		r.examin_time as "examinTime",
+		ovr.id as "overdueId",
+		concat_ws(',',IFNULL(rf.finance_imgs,''),IFNULL(rbm.business_manage_imgs,''),IFNULL(rcq.cumtomer_quality_imgs,''),IFNULL(rcf.customer_financial_imgs,''),IFNULL(rg.guarantee_imgs,'')) as 'reportImages'
+		FROM fyjf_t_customer a 
+		LEFT JOIN fyjf_t_area a4 ON a4.id = a.area_id 
+		LEFT JOIN fyjf_t_industry_type it ON it.id = a.industry_type_id 
+		LEFT JOIN fyjf_t_user u ON u.id = a.manager_by_us
+		LEFT JOIN fyjf_t_user u2 ON u2.id = a.bank_office_worker 
+		LEFT JOIN fyjf_t_report r on r.customer_id = a.id and  date_format(r.create_date,'%Y-%m')=date_format(now(),'%Y-%m')
+		LEFT JOIN fyjf_t_report_finance rf on rf.loan_report_id = r.id
+		LEFT JOIN fyjf_t_report_business_manage rbm on rbm.loan_report_id = r.id
+		LEFT JOIN fyjf_t_report_cumtomer_quality rcq on rcq.loan_report_id = r.id
+		LEFT JOIN fyjf_t_report_customer_financial rcf on rcf.loan_report_id = r.id
+		LEFT JOIN fyjf_t_report_guarantee rg on rg.loan_report_id = r.id
+		LEFT JOIN fyjf_t_overdue_report  ovr on ovr.customer_id = a.id and ovr.create_date > a.update_date
+		WHERE a.del_flag = '0' and u2.account = #{account}
+		<where>
+			a.del_flag = '0' and u2.account = #{account}
+			<if test="customerName != null">
+				AND a.name = #{customerName}
+			</if>
+		</where>
+		ORDER BY a.update_date DESC 
+	</select>
+	
 	
 	<select id="findAllList" resultType="Customer">
 		SELECT 

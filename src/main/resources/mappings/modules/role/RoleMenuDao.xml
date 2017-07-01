@@ -74,4 +74,11 @@
 		WHERE id = #{id}
 	</update>
 	
+	<update id="deleteAllByRole">
+		DELETE FROM fyjf_t_role_menu
+		WHERE role_id = #{roleId}
+	</update>
+	
+	
+	
 </mapper>

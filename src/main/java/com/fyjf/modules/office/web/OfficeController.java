@@ -26,8 +26,10 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.alibaba.fastjson.JSONObject;
 import com.fyjf.common.config.Global;
+import com.fyjf.common.persistence.Page;
 import com.fyjf.common.web.BaseController;
 import com.fyjf.common.utils.StringUtils;
+import com.fyjf.modules.app.entity.AppVersion;
 import com.fyjf.modules.area.entity.Area;
 import com.fyjf.modules.company.entity.Company;
 import com.fyjf.modules.customer.entity.Customer;
@@ -72,7 +74,8 @@ public class OfficeController extends BaseController {
 		if(org.springframework.util.StringUtils.isEmpty(companyId))companyId= UserUtils.getUser().getCompany().getId();
 		Office office = new Office();
 		office.setCompany(new Company(companyId));
-		vo.setData(officeService.findList(office));
+		Page page = new Page<Office>(param.getIntValue("pageNo"),param.getIntValue("pageSize"));
+		vo.setData(officeService.findPage(page, office));
 		return vo;
 	}
 

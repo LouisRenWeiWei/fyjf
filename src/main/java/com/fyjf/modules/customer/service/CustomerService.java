@@ -4,11 +4,13 @@
 package com.fyjf.modules.customer.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fyjf.common.persistence.Page;
 import com.fyjf.common.service.CrudService;
 import com.fyjf.modules.customer.entity.Customer;
@@ -49,6 +51,11 @@ public class CustomerService extends CrudService<CustomerDao, Customer> {
 	@Transactional(readOnly = false)
 	public void delete(Customer customer) {
 		super.delete(customer);
+	}
+
+	public List<Map<String,Object>> findListByApp(Map<String,Object> param) {
+		// TODO Auto-generated method stub
+		return dao.findListByApp(param);
 	}
 	
 }

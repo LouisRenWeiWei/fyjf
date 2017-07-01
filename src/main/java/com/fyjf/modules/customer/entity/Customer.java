@@ -37,9 +37,9 @@ public class Customer extends DataEntity<Customer> {
 	private Office bankOffice;
 	private User bankOfficeWorker;		// 银行员工
 	
-	private Report report;
+	private Report report;//可以最新的贷后报告
 	
-	private OverdueReport overdueReport;//逾期报告
+	private OverdueReport overdueReport;//客户最新的逾期报告
 	
 	public Customer() {
 		super();

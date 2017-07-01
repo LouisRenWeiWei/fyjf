@@ -200,6 +200,7 @@ public class Page<T> {
 	 * 获取设置总数
 	 * @return
 	 */
+	@JsonIgnore
 	public long getCount() {
 		return count;
 	}
@@ -269,7 +270,6 @@ public class Page<T> {
 	 * 获取页面总数
 	 * @return getLast();
 	 */
-	@JsonIgnore
 	public int getTotalPage() {
 		return getLast();
 	}
@@ -423,6 +423,7 @@ public class Page<T> {
 	/**
 	 * 获取 Hibernate FirstResult
 	 */
+	@JsonIgnore
 	public int getFirstResult(){
 		int firstResult = (getPageNo() - 1) * getPageSize();
 		if (firstResult >= getCount()) {
@@ -433,6 +434,7 @@ public class Page<T> {
 	/**
 	 * 获取 Hibernate MaxResults
 	 */
+	@JsonIgnore
 	public int getMaxResults(){
 		return getPageSize();
 	}

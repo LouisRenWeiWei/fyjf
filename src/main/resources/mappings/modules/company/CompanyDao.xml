@@ -73,7 +73,7 @@
 	<select id="findBankList" resultType="Map">
 		SELECT c.id,c.`name`,c.corpId,c.corpSecrect,c.socialCredit,a.`name` as areaName from fyjf_t_company c
 		LEFT JOIN fyjf_t_area a on c.area_id = a.id
-		where c.id!='0'
+		where c.id!= #{id}
 	</select>
 	
 	

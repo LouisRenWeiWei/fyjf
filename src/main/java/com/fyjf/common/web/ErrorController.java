@@ -18,11 +18,8 @@ public class ErrorController extends BaseController{
 	
 	@RequestMapping(value = {"/", "/index"})
 	@ResponseBody
-	public BaseVO index(HttpServletRequest request, HttpServletResponse response) {
-		BaseVO vo = new BaseVO();
-		vo.setCode(BaseVO.CODE_SUCCESS);
-		vo.setMsg("hello world");
-		return vo;
+	public String index(HttpServletRequest request, HttpServletResponse response) {		
+		return "hello world";
 	}
 	
 	@RequestMapping(value = {"/error_500", ""})

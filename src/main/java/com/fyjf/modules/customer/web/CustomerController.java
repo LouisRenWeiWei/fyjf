@@ -23,12 +23,14 @@ import com.fyjf.common.config.Global;
 import com.fyjf.common.persistence.Page;
 import com.fyjf.common.web.BaseController;
 import com.fyjf.common.utils.StringUtils;
+import com.fyjf.modules.app.entity.AppVersion;
 import com.fyjf.modules.area.entity.Area;
 import com.fyjf.modules.area.service.AreaService;
 import com.fyjf.modules.customer.entity.Customer;
 import com.fyjf.modules.customer.service.CustomerService;
 import com.fyjf.modules.industry.entity.IndustryType;
 import com.fyjf.modules.industry.service.IndustryTypeService;
+import com.fyjf.modules.loadtype.entity.LoanType;
 import com.fyjf.modules.office.entity.Office;
 import com.fyjf.modules.sys.utils.UserUtils;
 import com.fyjf.modules.user.entity.User;
@@ -68,21 +70,24 @@ public class CustomerController extends BaseController {
 	
 	@RequestMapping(value = "list", method = RequestMethod.POST)
 	@ResponseBody
-	public BaseVO list() {
+	public BaseVO list(@RequestBody JSONObject param) {
 		BaseVO vo = new BaseVO();
 		vo.setCode(BaseVO.CODE_SUCCESS);
-		vo.setData(customerService.findList(new Customer()));
+		Page page = new Page<Customer>(param.getIntValue("pageNo"),param.getIntValue("pageSize"));
+		vo.setData(customerService.findPage(page, new Customer()));
 		return vo;
 	}
 	
 	@RequestMapping(value = "list/mine", method = RequestMethod.POST)
 	@ResponseBody
-	public BaseVO list_mine() {
+	public BaseVO list_mine(@RequestBody JSONObject param) {
 		BaseVO vo = new BaseVO();
 		vo.setCode(BaseVO.CODE_SUCCESS);
 		Customer customer = new Customer();
-		customer.setManagerByUs(UserUtils.getUser());
-		vo.setData(customerService.findList(customer));
+		customer.setManagerByUs(UserUtils.getUser());		
+		Page page = new Page<Customer>(param.getIntValue("pageNo"),param.getIntValue("pageSize"));
+		vo.setData(customerService.findPage(page, customer));
+		
 		return vo;
 	}
 	
@@ -92,11 +97,13 @@ public class CustomerController extends BaseController {
 	public BaseVO list_by_bank_user(@RequestBody JSONObject param) {
 		BaseVO vo = new BaseVO();
 		vo.setCode(BaseVO.CODE_SUCCESS);
-		String account = param.getString("account");
-		Customer customer = new Customer();
-		customer.setBankOfficeWorker(UserUtils.getByAccount(account));
-		customer.setPage(JSONObject.toJavaObject(param.getJSONObject("page"), Page.class));
-		vo.setData(customerService.findList(customer));
+//		String account = param.getString("account");
+//		int customerState = param.getIntValue("customerState");
+//		Customer customer = new Customer();
+//		customer.setCustomerState(customerState);
+//		customer.setBankOfficeWorker(UserUtils.getByAccount(account));
+//		customer.setPage(JSONObject.toJavaObject(param.getJSONObject("page"), Page.class));
+		vo.setData(customerService.findListByApp(param));
 		return vo;
 	}
 
@@ -125,12 +132,14 @@ public class CustomerController extends BaseController {
 		return vo;
 	}
 	
-	@RequiresPermissions("customer:customer:edit")
+	
 	@RequestMapping(value = "delete")
-	public String delete(Customer customer, RedirectAttributes redirectAttributes) {
+	@ResponseBody
+	public BaseVO delete(Customer customer) {
 		customerService.delete(customer);
-		addMessage(redirectAttributes, "删除客户成功");
-		return "redirect:"+Global.getAdminPath()+"/customer/customer/list?repage";
+		BaseVO vo = new BaseVO();
+		vo.setCode(BaseVO.CODE_SUCCESS);
+		return vo;
 	}
 
 }

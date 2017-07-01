@@ -28,6 +28,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.fyjf.common.config.Global;
 import com.fyjf.common.web.BaseController;
 import com.fyjf.common.utils.StringUtils;
+import com.fyjf.modules.company.entity.Company;
 import com.fyjf.modules.company.service.CompanyService;
 import com.fyjf.modules.customer.entity.Customer;
 import com.fyjf.modules.customer.service.CustomerService;
@@ -52,33 +53,36 @@ public class MenuController extends BaseController {
 	@Autowired
 	private CompanyService companyService;
 	
-//	@Autowired
-//	private MenuService menuService;
-//
-//
-//	/**
-//	 * 根据用户所在的公司设置用户的菜单
-//	 * @param extId
-//	 * @param response
-//	 * @return
-//	 */
-//	@ResponseBody
-//	@RequestMapping(value = "treeData")
-//	public List<Map<String, Object>> treeData(@RequestParam(required=false) String extId, HttpServletResponse response) {
-//		List<Map<String, Object>> mapList = Lists.newArrayList();
-//		List<Menu> list = menuService.findList(new Menu());
-//		for (int i=0; i<list.size(); i++){
-//			Menu e = list.get(i);
-//			if (StringUtils.isBlank(extId) || (extId!=null && !extId.equals(e.getId()) && e.getParentIds().indexOf(","+extId+",")==-1)){
-//				Map<String, Object> map = Maps.newHashMap();
-//				map.put("id", e.getId());
-//				map.put("pId", e.getParentId());
-//				map.put("name", e.getName());
-//				mapList.add(map);
-//			}
-//		}
-//		return mapList;
-//	}
+	@Autowired
+	private MenuService menuService;
+
+
+	/**
+	 * 根据用户所在的公司设置用户的菜单
+	 * @param extId
+	 * @param response
+	 * @return
+	 */
+	
+	@RequestMapping(value = "treeData")
+	@ResponseBody
+	public BaseVO treeData() {
+		BaseVO vo = new BaseVO();
+		vo.setCode(BaseVO.CODE_SUCCESS);
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		List<Menu> list = menuService.findList(new Menu());
+		for (int i=0; i<list.size(); i++){
+			Menu e = list.get(i);
+			Map<String, Object> map = Maps.newHashMap();
+			map.put("id", e.getId());
+			map.put("pId", e.getParentId());
+			map.put("name", e.getName());
+			map.put("open", true);
+			mapList.add(map);
+		}
+		vo.setData(mapList);
+		return vo;
+	}
 	
 	/**
 	 * 查询富源金服用户对应权限的菜单
@@ -127,10 +131,10 @@ public class MenuController extends BaseController {
 		fyjfChildrenItem2.put("href", "fyjf/enterprise/list.html");
 		fyjfChildren.add(fyjfChildrenItem2);
 		
-		JSONObject fyjfChildrenItem3 = new JSONObject();
-		fyjfChildrenItem3.put("title", "我的客户");
-		fyjfChildrenItem3.put("href", "fyjf/customer/list.html");
-		fyjfChildren.add(fyjfChildrenItem3);
+//		JSONObject fyjfChildrenItem3 = new JSONObject();
+//		fyjfChildrenItem3.put("title", "我的客户");
+//		fyjfChildrenItem3.put("href", "fyjf/customer/list.html");
+//		fyjfChildren.add(fyjfChildrenItem3);
 		
 		JSONObject fyjfChildrenItem4 = new JSONObject();
 		fyjfChildrenItem4.put("title", "员工管理");
@@ -168,11 +172,18 @@ public class MenuController extends BaseController {
 		fyjfChildrenItem9.put("href", "fyjf/fyjf.html");
 		fyjfChildren.add(fyjfChildrenItem9);
 		
+		JSONObject fyjfChildrenItem11 = new JSONObject();
+		fyjfChildrenItem11.put("title", "APP管理");
+		fyjfChildrenItem11.put("href", "fyjf/app/list.html");
+		fyjfChildren.add(fyjfChildrenItem11);
+		
 		fyjfItem.put("children", fyjfChildren);
 		
 		data.add(fyjfItem);
 		
-		List<Map<String,Object>> banks = companyService.findBankList();
+		Company company = new Company();
+		company.setId("0");//排查非0的公司
+		List<Map<String,Object>> banks = companyService.findBankList(company);
 		for(Map<String,Object> b : banks){
 			JSONObject customerItem = new JSONObject();
 			customerItem.put("title", b.get("name"));
@@ -207,5 +218,7 @@ public class MenuController extends BaseController {
 		System.out.println(data.toJSONString());
 		return vo;
 	}
+	
+	
 	
 }

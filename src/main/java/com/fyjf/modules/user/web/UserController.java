@@ -23,7 +23,9 @@ import com.fyjf.common.config.Global;
 import com.fyjf.common.persistence.Page;
 import com.fyjf.common.web.BaseController;
 import com.fyjf.common.utils.StringUtils;
+import com.fyjf.modules.app.entity.AppVersion;
 import com.fyjf.modules.company.entity.Company;
+import com.fyjf.modules.customer.entity.Customer;
 import com.fyjf.modules.office.entity.Office;
 import com.fyjf.modules.office.service.OfficeService;
 import com.fyjf.modules.role.entity.Role;
@@ -79,7 +81,8 @@ public class UserController extends BaseController {
 		String companyId = param.getString("companyId");
 		if(org.springframework.util.StringUtils.isEmpty(companyId))companyId= UserUtils.getUser().getCompany().getId();
 		user.setCompany(new Company(companyId));
-		vo.setData(userService.findList(user));
+		Page page = new Page<User>(param.getIntValue("pageNo"),param.getIntValue("pageSize"));
+		vo.setData(userService.findPage(page, user));
 		return vo;
 	}
 	
@@ -119,6 +122,15 @@ public class UserController extends BaseController {
 		userOfficeService.save(userOffice);
 		
 		
+		vo.setCode(BaseVO.CODE_SUCCESS);
+		return vo;
+	}
+	
+	@RequestMapping(value = "delete")
+	@ResponseBody
+	public BaseVO delete(User user) {
+		userService.delete(user);
+		BaseVO vo = new BaseVO();
 		vo.setCode(BaseVO.CODE_SUCCESS);
 		return vo;
 	}

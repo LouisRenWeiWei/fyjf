@@ -26,8 +26,10 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.alibaba.fastjson.JSONObject;
 import com.fyjf.common.config.Global;
+import com.fyjf.common.persistence.Page;
 import com.fyjf.common.web.BaseController;
 import com.fyjf.common.utils.StringUtils;
+import com.fyjf.modules.app.entity.AppVersion;
 import com.fyjf.modules.company.entity.Company;
 import com.fyjf.modules.industry.entity.IndustryType;
 import com.fyjf.modules.industry.service.IndustryTypeService;
@@ -85,21 +87,24 @@ public class IndustryTypeController extends BaseController {
 	
 
 	@RequestMapping(value = "delete")
-	public String delete(IndustryType industryType) {
+	@ResponseBody
+	public BaseVO delete(IndustryType industryType) {
 		industryTypeService.delete(industryType);
-		return "redirect:"+Global.getAdminPath()+"/industry/industryType/list?repage";
+		BaseVO vo = new BaseVO();
+		vo.setCode(BaseVO.CODE_SUCCESS);
+		return vo;
 	}
 	
-//	@RequestMapping(value = "firstLevel", method = RequestMethod.POST)
-//	@ResponseBody
-//	public BaseVO list_firstLevel() {
-//		BaseVO vo = new BaseVO();
-//		vo.setCode(BaseVO.CODE_SUCCESS);
-//		IndustryType industryType = new IndustryType();
-//		industryType.setParent(new IndustryType("0"));
-//		vo.setData(industryTypeService.findList(industryType));
-//		return vo;
-//	}
+	@RequestMapping(value = "firstLevel", method = RequestMethod.POST)
+	@ResponseBody
+	public BaseVO list_firstLevel() {
+		BaseVO vo = new BaseVO();
+		vo.setCode(BaseVO.CODE_SUCCESS);
+		IndustryType industryType = new IndustryType();
+		industryType.setParent(new IndustryType("0"));
+		vo.setData(industryTypeService.findList(industryType));
+		return vo;
+	}
 	
 	@RequestMapping(value = "levelByPid", method = RequestMethod.POST)
 	@ResponseBody
@@ -115,11 +120,13 @@ public class IndustryTypeController extends BaseController {
 	
 	@ResponseBody
 	@RequestMapping(value = "list/display")
-	public BaseVO list_display() {
+	public BaseVO list_display(@RequestBody JSONObject param) {
 		BaseVO vo = new BaseVO();
 		vo.setCode(BaseVO.CODE_SUCCESS);
 		IndustryType industry =  new IndustryType();
 		industry.setSort(industry.getSort()*3);
+		Page page = new Page<IndustryType>(param.getIntValue("pageNo"),param.getIntValue("pageSize"));
+		industry.setPage(page);
 		List<IndustryType> list = industryTypeService.findListDisplay(industry);
 		List<Map<String, Object>> mapList = Lists.newArrayList();
 		for (int i=0; i<list.size(); i++){
@@ -135,7 +142,8 @@ public class IndustryTypeController extends BaseController {
 			map.put("topName", e.getParent().getParent().getName());
 			mapList.add(map);
 		}
-		vo.setData(mapList);
+		page.setList(mapList);
+		vo.setData(page);
 		return vo;
 	}
 

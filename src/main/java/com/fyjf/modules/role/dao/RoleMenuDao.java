@@ -15,5 +15,8 @@ import com.fyjf.modules.role.entity.RoleMenu;
  */
 @MyBatisDao
 public interface RoleMenuDao extends CrudDao<RoleMenu> {
+
+	void deleteAllByRole(RoleMenu roleMenu);
+
 	
 }
